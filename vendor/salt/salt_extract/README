@@ -1,0 +1,24 @@
+SALT Compiler README
+--------------------
+
+The SALT compiler is a program that translates temporal specifications
+in the SALT language into LTL and TLTL formulae.
+
+(C) 2006 Jonathan Streit and contributors.
+The SALT compiler comes with ABSOLUTELY NO WARRANTY.
+It is released under the GNU GPL as free software, and you are welcome 
+to redistribute it under certain conditions. See the file LICENSE 
+for details. The file AUTHORS contains a full list of developers and
+contributors.
+
+The SALT compiler can be downloaded from http://salt.in.tum.de as
+binary or source. The website also provides further information and a 
+web interface to the compiler. The authors can be contacted at 
+salt _AT_ mailbroy.informatik.tu-muenchen.de. Feedback is greatly
+appreciated.
+
+See the manual for information on how to install and use the SALT
+compiler as well as for a tutorial and reference to the SALT language.
+If you want to build the compiler from source (only necessary
+if you want to modify it), use the ANT-Buildfile build.xml included
+in the source distribution.

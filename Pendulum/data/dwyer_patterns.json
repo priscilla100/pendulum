@@ -1,0 +1,1052 @@
+{
+  "version": 2,
+  "description": "Dwyer et al. property specification patterns, LTL mappings, project surface syntax",
+  "source": "Property Specification Patterns catalogue (SAnToS/KSU), LTL mappings page; transcribed into this project's parser syntax (G/F/X/U/W, ASCII, lowercase atoms p q r s t z). Known typos in the published ASCII (unbalanced parentheses) are resolved per the standard corrected reading and noted per entry.",
+  "patterns": [
+    {
+      "id": "absence_global",
+      "pattern": "Absence",
+      "scope": "Global",
+      "intent": "The event or state P never occurs at any point of the execution.",
+      "ltl_template": "G (!p)",
+      "placeholders": [
+        "p"
+      ],
+      "example_nl": [
+        "the system never enters a deadlock state",
+        "no packet is ever dropped",
+        "the robot arm never crosses the safety boundary"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "absence_before_r",
+      "pattern": "Absence",
+      "scope": "Before R",
+      "intent": "P never occurs before the first occurrence of R.",
+      "ltl_template": "(F r) -> (!p U r)",
+      "placeholders": [
+        "p",
+        "r"
+      ],
+      "example_nl": [
+        "no data is transmitted before the connection is established",
+        "before the oven is preheated, the tray is never inserted",
+        "the elevator doors never open before the cabin reaches a floor"
+      ],
+      "notes": "Standard before-scope convention: only executions in which r eventually occurs are constrained (the F r guard); vacuously true otherwise."
+    },
+    {
+      "id": "absence_after_q",
+      "pattern": "Absence",
+      "scope": "After Q",
+      "intent": "After the first occurrence of Q, P never occurs again.",
+      "ltl_template": "G (q -> (G (!p)))",
+      "placeholders": [
+        "p",
+        "q"
+      ],
+      "example_nl": [
+        "after the account is closed, no withdrawals ever occur",
+        "once the emergency stop is pressed, the conveyor never moves again",
+        "after logout, no further commands are accepted"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "absence_between_q_and_r",
+      "pattern": "Absence",
+      "scope": "Between Q and R",
+      "intent": "P never occurs between any occurrence of Q and the next following occurrence of R.",
+      "ltl_template": "G ((q & !r & (F r)) -> (!p U r))",
+      "placeholders": [
+        "p",
+        "q",
+        "r"
+      ],
+      "example_nl": [
+        "between takeoff and landing, the cabin doors never open",
+        "no configuration changes happen between the start and the end of an audit",
+        "between arming and disarming the alarm, the safe is never opened"
+      ],
+      "notes": "Only q-intervals that are actually closed by a later r are constrained (F r conjunct)."
+    },
+    {
+      "id": "absence_after_q_until_r",
+      "pattern": "Absence",
+      "scope": "After Q until R",
+      "intent": "After any occurrence of Q, P does not occur until R occurs; if R never occurs, P never occurs again.",
+      "ltl_template": "G ((q & !r) -> (!p W r))",
+      "placeholders": [
+        "p",
+        "q",
+        "r"
+      ],
+      "example_nl": [
+        "after a fault is detected, no new jobs are started until the fault is cleared",
+        "once the tank is sealed, no gas escapes until it is reopened",
+        "after the match starts, and until the referee whistles, no substitutions occur"
+      ],
+      "notes": "Weak until: unlike the between-scope variant, the interval need not close — if r never occurs after q, the prohibition on p extends forever."
+    },
+    {
+      "id": "existence_global",
+      "pattern": "Existence",
+      "scope": "Global",
+      "intent": "P occurs at least once during the execution.",
+      "ltl_template": "F p",
+      "placeholders": [
+        "p"
+      ],
+      "example_nl": [
+        "the process eventually terminates",
+        "a leader is eventually elected",
+        "the parcel is delivered at some point"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "existence_before_r",
+      "pattern": "Existence",
+      "scope": "Before R",
+      "intent": "P occurs at least once before the first occurrence of R; if R never occurs, P is not required.",
+      "ltl_template": "!r W (p & !r)",
+      "placeholders": [
+        "p",
+        "r"
+      ],
+      "example_nl": [
+        "a safety check occurs before the reactor reaches full power",
+        "before the session times out, the user logs in at least once",
+        "the backup runs at least once before the disk is replaced"
+      ],
+      "notes": "Weak until: vacuously satisfied when r never occurs; p is only forced on executions where r eventually happens."
+    },
+    {
+      "id": "existence_after_q",
+      "pattern": "Existence",
+      "scope": "After Q",
+      "intent": "After the first occurrence of Q, P eventually occurs; vacuously true if Q never occurs.",
+      "ltl_template": "(G (!q)) | (F (q & (F p)))",
+      "placeholders": [
+        "p",
+        "q"
+      ],
+      "example_nl": [
+        "after the button is pressed, the light eventually turns on",
+        "once a job is submitted, it is eventually scheduled",
+        "after boot completes, the service eventually becomes ready"
+      ],
+      "notes": "Canonical site text has a stray trailing parenthesis ('[](!Q) | <>(Q & <>P))'); balanced here."
+    },
+    {
+      "id": "existence_between_q_and_r",
+      "pattern": "Existence",
+      "scope": "Between Q and R",
+      "intent": "Between any occurrence of Q and the next R, P occurs at least once; intervals that are never closed by R impose no obligation.",
+      "ltl_template": "G ((q & !r) -> (!r W (p & !r)))",
+      "placeholders": [
+        "p",
+        "q",
+        "r"
+      ],
+      "example_nl": [
+        "between placing an order and receiving it, a payment occurs",
+        "in every trip between ignition and engine off, the seatbelt sensor triggers at least once",
+        "between check-in and check-out, housekeeping visits the room"
+      ],
+      "notes": "Weak until: if r never follows q, no p is required (open intervals are unconstrained)."
+    },
+    {
+      "id": "existence_after_q_until_r",
+      "pattern": "Existence",
+      "scope": "After Q until R",
+      "intent": "After any occurrence of Q, P eventually occurs and does so before the next R; P is required even if R never occurs.",
+      "ltl_template": "G ((q & !r) -> (!r U (p & !r)))",
+      "placeholders": [
+        "p",
+        "q",
+        "r"
+      ],
+      "example_nl": [
+        "after the alarm sounds, the operator responds at least once before it is silenced",
+        "once a request is queued, it gets processed before the queue is flushed",
+        "after a fire is detected, and until the all-clear, the sprinklers activate at least once"
+      ],
+      "notes": "Strong until: this is the only difference from the between-scope variant — p is mandatory after q even when r never arrives."
+    },
+    {
+      "id": "bounded_existence_global",
+      "pattern": "Bounded Existence",
+      "scope": "Global",
+      "intent": "Transitions into the P-state occur at most two times over the whole execution.",
+      "ltl_template": "!p W (p W (!p W (p W (G (!p)))))",
+      "placeholders": [
+        "p"
+      ],
+      "example_nl": [
+        "the system reboots at most twice",
+        "the airbag can deploy no more than two times",
+        "during its lifetime the battery is replaced at most twice"
+      ],
+      "notes": "The published catalogue fixes the bound at 'at most 2 designated states'; other bounds are obtained by unfolding the W-nesting further."
+    },
+    {
+      "id": "bounded_existence_before_r",
+      "pattern": "Bounded Existence",
+      "scope": "Before R",
+      "intent": "Before the first occurrence of R, the P-state is entered at most two times.",
+      "ltl_template": "(F r) -> ((!p & !r) U (r | ((p & !r) U (r | ((!p & !r) U (r | ((p & !r) U (r | (!p U r)))))))))",
+      "placeholders": [
+        "p",
+        "r"
+      ],
+      "example_nl": [
+        "before the race ends, a driver may pit at most twice",
+        "at most two retries happen before the download completes",
+        "the pump activates at most twice before the tank is full"
+      ],
+      "notes": "Only constrains executions where r eventually occurs (F r guard)."
+    },
+    {
+      "id": "bounded_existence_after_q",
+      "pattern": "Bounded Existence",
+      "scope": "After Q",
+      "intent": "After the first occurrence of Q, the P-state is entered at most two times.",
+      "ltl_template": "(F q) -> (!q U (q & (!p W (p W (!p W (p W (G (!p))))))))",
+      "placeholders": [
+        "p",
+        "q"
+      ],
+      "example_nl": [
+        "after deployment, the service restarts no more than twice",
+        "once the exam begins, a student may leave the room at most twice",
+        "after entering degraded mode, the backup generator starts at most twice"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "bounded_existence_between_q_and_r",
+      "pattern": "Bounded Existence",
+      "scope": "Between Q and R",
+      "intent": "Between any occurrence of Q and the next R, the P-state is entered at most two times.",
+      "ltl_template": "G ((q & (F r)) -> ((!p & !r) U (r | ((p & !r) U (r | ((!p & !r) U (r | ((p & !r) U (r | (!p U r))))))))))",
+      "placeholders": [
+        "p",
+        "q",
+        "r"
+      ],
+      "example_nl": [
+        "between login and logout, at most two failed password attempts occur",
+        "between takeoff and landing, the autopilot disengages at most twice",
+        "at most two lane changes happen between entering and exiting the tunnel"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "bounded_existence_after_q_until_r",
+      "pattern": "Bounded Existence",
+      "scope": "After Q until R",
+      "intent": "After any occurrence of Q, and until the next R (or forever if R never occurs), the P-state is entered at most two times.",
+      "ltl_template": "G (q -> ((!p & !r) U (r | ((p & !r) U (r | ((!p & !r) U (r | ((p & !r) U (r | (!p W r) | (G p))))))))))",
+      "placeholders": [
+        "p",
+        "q",
+        "r"
+      ],
+      "example_nl": [
+        "after maintenance mode starts, at most two test cycles run until normal operation resumes",
+        "once the breaker is energized, it trips at most twice until it is powered down",
+        "after boarding begins, and until the doors close, the gate agent reopens the gate at most twice"
+      ],
+      "notes": "Tail 'r | (!p W r) | (G p)' is verbatim from the catalogue: (!p W r) covers r never arriving after the second p-interval ends, and G p covers a final p-interval that never ends."
+    },
+    {
+      "id": "universality_global",
+      "pattern": "Universality",
+      "scope": "Global",
+      "intent": "P holds at every point of the execution.",
+      "ltl_template": "G p",
+      "placeholders": [
+        "p"
+      ],
+      "example_nl": [
+        "the pressure always stays below the threshold",
+        "the invariant holds at every step",
+        "the aircraft is always within its assigned corridor"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "universality_before_r",
+      "pattern": "Universality",
+      "scope": "Before R",
+      "intent": "P holds continuously at every point before the first occurrence of R.",
+      "ltl_template": "(F r) -> (p U r)",
+      "placeholders": [
+        "p",
+        "r"
+      ],
+      "example_nl": [
+        "before the gate opens, the warning light stays on continuously",
+        "the file remains locked at all times before the transfer completes",
+        "until liftoff, the umbilical cable stays connected"
+      ],
+      "notes": "Only executions where r eventually occurs are constrained (F r guard)."
+    },
+    {
+      "id": "universality_after_q",
+      "pattern": "Universality",
+      "scope": "After Q",
+      "intent": "After the first occurrence of Q, P holds at every subsequent point.",
+      "ltl_template": "G (q -> (G p))",
+      "placeholders": [
+        "p",
+        "q"
+      ],
+      "example_nl": [
+        "after initialization, the watchdog is always enabled",
+        "once encryption is turned on, all traffic remains encrypted forever",
+        "after the contract is signed, the terms remain in force at all times"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "universality_between_q_and_r",
+      "pattern": "Universality",
+      "scope": "Between Q and R",
+      "intent": "P holds continuously between any occurrence of Q and the next following R.",
+      "ltl_template": "G ((q & !r & (F r)) -> (p U r))",
+      "placeholders": [
+        "p",
+        "q",
+        "r"
+      ],
+      "example_nl": [
+        "between ignition and shutdown, the oil pump is continuously running",
+        "the seatbelt sign stays on between takeoff and reaching cruising altitude",
+        "between check-in and check-out, the room is always marked occupied"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "universality_after_q_until_r",
+      "pattern": "Universality",
+      "scope": "After Q until R",
+      "intent": "After any occurrence of Q, P holds continuously until R occurs; if R never occurs, P holds forever.",
+      "ltl_template": "G ((q & !r) -> (p W r))",
+      "placeholders": [
+        "p",
+        "q",
+        "r"
+      ],
+      "example_nl": [
+        "after the door closes, it stays locked until the train comes to a stop",
+        "once the brake is applied, it remains engaged until the vehicle is stationary",
+        "after login, the session token stays valid until logout"
+      ],
+      "notes": "Weak until: the q-interval may never close, in which case p must hold forever."
+    },
+    {
+      "id": "precedence_global",
+      "pattern": "Precedence",
+      "scope": "Global",
+      "intent": "P does not occur until S has occurred first; if S never occurs, P never occurs (S precedes P).",
+      "ltl_template": "!p W s",
+      "placeholders": [
+        "p",
+        "s"
+      ],
+      "example_nl": [
+        "a resource is granted only if it was requested first",
+        "the missile can launch only after authorization has been given",
+        "no withdrawal happens unless a deposit occurred beforehand"
+      ],
+      "notes": "Weak until: satisfied by executions where neither p nor s ever occurs."
+    },
+    {
+      "id": "precedence_before_r",
+      "pattern": "Precedence",
+      "scope": "Before R",
+      "intent": "Before the first occurrence of R, P can occur only if S occurred before it.",
+      "ltl_template": "(F r) -> (!p U (s | r))",
+      "placeholders": [
+        "p",
+        "r",
+        "s"
+      ],
+      "example_nl": [
+        "before the deadline, a paper can be reviewed only if it was submitted first",
+        "before the system shuts down, data is written only after a checkpoint was taken",
+        "prior to the store opening, shelves are stocked only after the delivery arrives"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "precedence_after_q",
+      "pattern": "Precedence",
+      "scope": "After Q",
+      "intent": "After the first occurrence of Q, P can occur only if S occurred first.",
+      "ltl_template": "(G (!q)) | (F (q & (!p W s)))",
+      "placeholders": [
+        "p",
+        "q",
+        "s"
+      ],
+      "example_nl": [
+        "after boot, the application runs only once the license check has passed",
+        "once the auction opens, an item is sold only after some bid was placed",
+        "after the shift starts, a machine operates only if a supervisor has signed off first"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "precedence_between_q_and_r",
+      "pattern": "Precedence",
+      "scope": "Between Q and R",
+      "intent": "Between any occurrence of Q and the next R, P can occur only if S occurred before it within the interval.",
+      "ltl_template": "G ((q & !r & (F r)) -> (!p U (s | r)))",
+      "placeholders": [
+        "p",
+        "q",
+        "r",
+        "s"
+      ],
+      "example_nl": [
+        "between power-on and power-off, the motor spins only after the safety cover has been closed",
+        "between docking and undocking, unloading happens only after the ramp is secured",
+        "between the game start and the final whistle, points are scored only after the kickoff occurs"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "precedence_after_q_until_r",
+      "pattern": "Precedence",
+      "scope": "After Q until R",
+      "intent": "After any occurrence of Q, and until R, P can occur only if S occurred first; the constraint also applies if R never occurs.",
+      "ltl_template": "G ((q & !r) -> (!p W (s | r)))",
+      "placeholders": [
+        "p",
+        "q",
+        "r",
+        "s"
+      ],
+      "example_nl": [
+        "after the alarm is armed, and until it is disarmed, the door opens only if a valid code was entered first",
+        "once a call starts, and until it ends, audio is transmitted only after the microphone is unmuted",
+        "after entering the tunnel, and until leaving it, the horn sounds only if a hazard was detected first"
+      ],
+      "notes": "Weak until: covers intervals that never close."
+    },
+    {
+      "id": "response_global",
+      "pattern": "Response",
+      "scope": "Global",
+      "intent": "Every occurrence of P is eventually followed by an occurrence of S (S responds to P).",
+      "ltl_template": "G (p -> (F s))",
+      "placeholders": [
+        "p",
+        "s"
+      ],
+      "example_nl": [
+        "every request is eventually acknowledged",
+        "whenever the alarm sounds, the operator eventually responds",
+        "each submitted print job is eventually printed"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "response_before_r",
+      "pattern": "Response",
+      "scope": "Before R",
+      "intent": "Before the first occurrence of R, every P is followed by an S that also occurs before R.",
+      "ltl_template": "(F r) -> ((p -> (!r U (s & !r))) U r)",
+      "placeholders": [
+        "p",
+        "r",
+        "s"
+      ],
+      "example_nl": [
+        "before the trading day ends, every placed order is filled",
+        "before the system shuts down, every received message gets a reply",
+        "prior to the inspection ending, each fault that is raised gets repaired"
+      ],
+      "notes": "The response s must occur strictly before the scope-closing r (s & !r)."
+    },
+    {
+      "id": "response_after_q",
+      "pattern": "Response",
+      "scope": "After Q",
+      "intent": "After the first occurrence of Q, every P is eventually followed by an S.",
+      "ltl_template": "G (q -> (G (p -> (F s))))",
+      "placeholders": [
+        "p",
+        "q",
+        "s"
+      ],
+      "example_nl": [
+        "after initialization completes, every interrupt is eventually handled",
+        "once the service goes live, each query eventually receives a response",
+        "after the store opens, every customer who rings the bell is eventually attended"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "response_between_q_and_r",
+      "pattern": "Response",
+      "scope": "Between Q and R",
+      "intent": "Between any occurrence of Q and the next R, every P is followed by an S within the same interval, before R.",
+      "ltl_template": "G ((q & !r & (F r)) -> ((p -> (!r U (s & !r))) U r))",
+      "placeholders": [
+        "p",
+        "q",
+        "r",
+        "s"
+      ],
+      "example_nl": [
+        "between opening and closing time, every customer who takes a ticket is served before closing",
+        "between engine start and engine stop, every sensor fault triggers a warning before the engine stops",
+        "between connection setup and teardown, every ping receives a pong before the teardown"
+      ],
+      "notes": "The response s must land inside the interval (s & !r)."
+    },
+    {
+      "id": "response_after_q_until_r",
+      "pattern": "Response",
+      "scope": "After Q until R",
+      "intent": "After any occurrence of Q, and until R, every P is eventually followed by an S before R; the obligation also holds if R never occurs.",
+      "ltl_template": "G ((q & !r) -> ((p -> (!r U (s & !r))) W r))",
+      "placeholders": [
+        "p",
+        "q",
+        "r",
+        "s"
+      ],
+      "example_nl": [
+        "after monitoring is enabled, and until it is disabled, every anomaly is eventually logged",
+        "once boarding begins, and until the doors close, every scanned boarding pass is confirmed",
+        "after the pump starts, and until it stops, every pressure spike is eventually vented"
+      ],
+      "notes": "Weak until: if r never occurs, the response obligation persists forever. Canonical site text is missing one closing parenthesis; balanced here (matches the seed corpus in tests/run_tests.py)."
+    },
+    {
+      "id": "precedence_chain_21_global",
+      "pattern": "Precedence Chain (2 stimulus - 1 response)",
+      "scope": "Global",
+      "intent": "P can occur only if it was preceded by an S and, after that S, by a T (the two-event chain S then T precedes P).",
+      "ltl_template": "(F p) -> (!p U (s & !p & (X (!p U t))))",
+      "placeholders": [
+        "p",
+        "s",
+        "t"
+      ],
+      "example_nl": [
+        "access is granted only if a request was made and then approved beforehand",
+        "the rocket ignites only after the tanks were filled and then the launch area was cleared",
+        "a refund is issued only if a purchase occurred and a complaint was later filed"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "precedence_chain_21_before_r",
+      "pattern": "Precedence Chain (2 stimulus - 1 response)",
+      "scope": "Before R",
+      "intent": "Before the first occurrence of R, P can occur only if an S followed by a T occurred before it.",
+      "ltl_template": "(F r) -> (!p U (r | (s & !p & (X (!p U t)))))",
+      "placeholders": [
+        "p",
+        "r",
+        "s",
+        "t"
+      ],
+      "example_nl": [
+        "before the product ships, it is packaged only if it was assembled and then inspected first",
+        "before the trial ends, a verdict is announced only after evidence was presented and then deliberated",
+        "prior to the launch window closing, ignition happens only if fueling completed and then the checklist was signed"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "precedence_chain_21_after_q",
+      "pattern": "Precedence Chain (2 stimulus - 1 response)",
+      "scope": "After Q",
+      "intent": "After the first occurrence of Q, P can occur only if an S followed by a T occurred first.",
+      "ltl_template": "(G (!q)) | (!q U (q & ((F p) -> (!p U (s & !p & (X (!p U t)))))))",
+      "placeholders": [
+        "p",
+        "q",
+        "s",
+        "t"
+      ],
+      "example_nl": [
+        "after the plant starts up, the turbine engages only if the boiler was lit and then pressure was confirmed",
+        "once the course begins, a certificate is issued only if the student enrolled and then passed the exam",
+        "after the network comes up, a session opens only if a handshake happened and was then authenticated"
+      ],
+      "notes": "Canonical site text is unbalanced and reads '(!Q U (Q & <>P -> ...)'; resolved as q & ((F p) -> ...), matching the parenthesization the catalogue makes explicit in the 1-stimulus-2-response After-Q mapping."
+    },
+    {
+      "id": "precedence_chain_21_between_q_and_r",
+      "pattern": "Precedence Chain (2 stimulus - 1 response)",
+      "scope": "Between Q and R",
+      "intent": "Between any occurrence of Q and the next R, P can occur only if an S followed by a T occurred before it within the interval.",
+      "ltl_template": "G ((q & (F r)) -> (!p U (r | (s & !p & (X (!p U t))))))",
+      "placeholders": [
+        "p",
+        "q",
+        "r",
+        "s",
+        "t"
+      ],
+      "example_nl": [
+        "between shift start and shift end, a weld is made only after the parts were mounted and then aligned",
+        "between hospital admission and discharge, surgery happens only if the patient was examined and then anesthetized",
+        "between market open and close, a trade executes only after a quote arrived and was then validated"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "precedence_chain_21_after_q_until_r",
+      "pattern": "Precedence Chain (2 stimulus - 1 response)",
+      "scope": "After Q until R",
+      "intent": "After any occurrence of Q, and until R, P can occur only if an S followed by a T occurred before it.",
+      "ltl_template": "G (q -> ((F p) -> (!p U (r | (s & !p & (X (!p U t)))))))",
+      "placeholders": [
+        "p",
+        "q",
+        "r",
+        "s",
+        "t"
+      ],
+      "example_nl": [
+        "after the system is armed, and until it is disarmed, the gate opens only if a badge was scanned and then verified",
+        "once drilling starts, and until it stops, the drill descends only after the site was surveyed and then approved",
+        "after the oven turns on, and until it turns off, baking begins only if dough was loaded and then proofed"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "precedence_chain_12_global",
+      "pattern": "Precedence Chain (1 stimulus - 2 response)",
+      "scope": "Global",
+      "intent": "A chain of S followed later by T can occur only if P occurred before the S (P precedes the chain S then T).",
+      "ltl_template": "(F (s & (X (F t)))) -> (!s U p)",
+      "placeholders": [
+        "p",
+        "s",
+        "t"
+      ],
+      "example_nl": [
+        "a payment followed later by a shipment can only happen if an order was placed first",
+        "an alarm followed by an evacuation occurs only if smoke was detected beforehand",
+        "a download followed by an installation happens only after a license was purchased"
+      ],
+      "notes": "Canonical site text has a stray trailing parenthesis; balanced here."
+    },
+    {
+      "id": "precedence_chain_12_before_r",
+      "pattern": "Precedence Chain (1 stimulus - 2 response)",
+      "scope": "Before R",
+      "intent": "Before the first occurrence of R, a chain of S followed by T can occur only if P occurred before it.",
+      "ltl_template": "(F r) -> ((!(s & !r & (X (!r U (t & !r))))) U (r | p))",
+      "placeholders": [
+        "p",
+        "r",
+        "s",
+        "t"
+      ],
+      "example_nl": [
+        "before the store closes, a fitting followed by a purchase happens only if the customer checked in first",
+        "before the flight departs, boarding followed by door closure occurs only if the aircraft was fueled first",
+        "prior to the merger completing, an offer followed by an acceptance occurs only if due diligence was done first"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "precedence_chain_12_after_q",
+      "pattern": "Precedence Chain (1 stimulus - 2 response)",
+      "scope": "After Q",
+      "intent": "After the first occurrence of Q, a chain of S followed by T can occur only if P occurred first.",
+      "ltl_template": "(G (!q)) | (!q U (q & ((F (s & (X (F t)))) -> (!s U p))))",
+      "placeholders": [
+        "p",
+        "q",
+        "s",
+        "t"
+      ],
+      "example_nl": [
+        "after the market opens, a quote followed by a trade occurs only if the account was funded first",
+        "once the lab opens, an experiment followed by a report happens only if the protocol was approved first",
+        "after the season starts, a semifinal followed by a final is played only if qualifications were held first"
+      ],
+      "notes": "Canonical site text is missing one closing parenthesis; balanced here."
+    },
+    {
+      "id": "precedence_chain_12_between_q_and_r",
+      "pattern": "Precedence Chain (1 stimulus - 2 response)",
+      "scope": "Between Q and R",
+      "intent": "Between any occurrence of Q and the next R, a chain of S followed by T can occur only if P occurred before it within the interval.",
+      "ltl_template": "G ((q & (F r)) -> ((!(s & !r & (X (!r U (t & !r))))) U (r | p)))",
+      "placeholders": [
+        "p",
+        "q",
+        "r",
+        "s",
+        "t"
+      ],
+      "example_nl": [
+        "between dawn and dusk, a takeoff followed by a landing occurs only if a flight plan was filed first",
+        "between admission and discharge, medication followed by observation is given only if a doctor prescribed it first",
+        "between checkout and delivery, packing followed by dispatch happens only if the payment cleared first"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "precedence_chain_12_after_q_until_r",
+      "pattern": "Precedence Chain (1 stimulus - 2 response)",
+      "scope": "After Q until R",
+      "intent": "After any occurrence of Q, and until R, a chain of S followed by T can occur only if P occurred before it.",
+      "ltl_template": "G (q -> (((!(s & !r & (X (!r U (t & !r))))) U (r | p)) | (G (!(s & (X (F t)))))))",
+      "placeholders": [
+        "p",
+        "q",
+        "r",
+        "s",
+        "t"
+      ],
+      "example_nl": [
+        "after the plant is commissioned, and until it is decommissioned, a startup followed by full load occurs only if an inspection passed first",
+        "once the tournament starts, and until it ends, a semifinal followed by a final is played only if the group stage finished first",
+        "after the network is enabled, and until it is disabled, a login followed by a file transfer happens only if credentials were provisioned first"
+      ],
+      "notes": "Site text 'A U (R | P) | [](...)' resolved as '(A U (r | p)) | G(...)': the G-disjunct is the weak escape for when r and p never occur and no complete s-then-t chain ever starts."
+    },
+    {
+      "id": "response_chain_21_global",
+      "pattern": "Response Chain (2 stimulus - 1 response)",
+      "scope": "Global",
+      "intent": "Whenever S occurs and is later followed by T, then after that T an occurrence of P eventually follows (P responds to the chain S then T).",
+      "ltl_template": "G ((s & (X (F t))) -> (X (F (t & (F p)))))",
+      "placeholders": [
+        "p",
+        "s",
+        "t"
+      ],
+      "example_nl": [
+        "whenever a request is later followed by a timeout, a retry eventually occurs afterwards",
+        "if a temperature spike is later followed by a pressure spike, a shutdown eventually follows",
+        "whenever a bid is followed by a counterbid, the auctioneer eventually announces a decision"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "response_chain_21_before_r",
+      "pattern": "Response Chain (2 stimulus - 1 response)",
+      "scope": "Before R",
+      "intent": "Before the first occurrence of R, whenever S is followed by T within that region, P eventually follows the T.",
+      "ltl_template": "(F r) -> (((s & (X (!r U t))) -> (X (!r U (t & (F p))))) U r)",
+      "placeholders": [
+        "p",
+        "r",
+        "s",
+        "t"
+      ],
+      "example_nl": [
+        "before the session ends, whenever a query is followed by an error, a diagnostic eventually runs afterwards",
+        "before the ship docks, whenever a warning is followed by a second warning, the captain is eventually notified",
+        "prior to the shift ending, whenever a jam is followed by a stoppage, a technician eventually intervenes"
+      ],
+      "notes": "In the canonical mapping the final 'F p' is not bounded by !r, so the response p itself may fall after the scope closes; published as-is."
+    },
+    {
+      "id": "response_chain_21_after_q",
+      "pattern": "Response Chain (2 stimulus - 1 response)",
+      "scope": "After Q",
+      "intent": "After the first occurrence of Q, whenever S is later followed by T, P eventually follows that T.",
+      "ltl_template": "G (q -> (G ((s & (X (F t))) -> (X (!t U (t & (F p)))))))",
+      "placeholders": [
+        "p",
+        "q",
+        "s",
+        "t"
+      ],
+      "example_nl": [
+        "after the reactor starts, whenever a coolant alarm is followed by a pressure alarm, an operator eventually intervenes",
+        "once the game begins, whenever a foul is followed by a second foul, a penalty is eventually awarded",
+        "after the pipeline is deployed, whenever a build failure is followed by a rollback, an incident report is eventually filed"
+      ],
+      "notes": "Canonical mapping uses X (!t U (t & F p)) — with !t rather than the F of the global variant — transcribed verbatim from the catalogue."
+    },
+    {
+      "id": "response_chain_21_between_q_and_r",
+      "pattern": "Response Chain (2 stimulus - 1 response)",
+      "scope": "Between Q and R",
+      "intent": "Between any occurrence of Q and the next R, whenever S is followed by T within the interval, P eventually follows the T.",
+      "ltl_template": "G ((q & (F r)) -> (((s & (X (!r U t))) -> (X (!r U (t & (F p))))) U r))",
+      "placeholders": [
+        "p",
+        "q",
+        "r",
+        "s",
+        "t"
+      ],
+      "example_nl": [
+        "between takeoff and landing, whenever turbulence is followed by an altitude drop, the crew eventually makes an announcement",
+        "between market open and close, whenever a dip is followed by a rebound, the analyst eventually files a report",
+        "between login and logout, whenever a failed write is followed by a retry, the cache is eventually flushed"
+      ],
+      "notes": "As in the Before-R variant, the final response p is not itself bounded by !r in the published mapping."
+    },
+    {
+      "id": "response_chain_21_after_q_until_r",
+      "pattern": "Response Chain (2 stimulus - 1 response)",
+      "scope": "After Q until R",
+      "intent": "After any occurrence of Q, and until R, whenever S is followed by T, P eventually follows the T.",
+      "ltl_template": "G (q -> (((s & (X (!r U t))) -> (X (!r U (t & (F p))))) U (r | (G ((s & (X (!r U t))) -> (X (!r U (t & (F p)))))))))",
+      "placeholders": [
+        "p",
+        "q",
+        "r",
+        "s",
+        "t"
+      ],
+      "example_nl": [
+        "after monitoring starts, and until it stops, whenever a fault is followed by a second fault, a technician is eventually dispatched",
+        "once the line is energized, and until it is shut off, whenever a surge is followed by a flicker, the breaker eventually trips",
+        "after the watch begins, and until relief arrives, whenever a radar contact is followed by a confirmation, the bridge is eventually alerted"
+      ],
+      "notes": "The right-hand disjunct of the outer U (r | G(...)) is the weak escape covering the case where r never occurs."
+    },
+    {
+      "id": "response_chain_12_global",
+      "pattern": "Response Chain (1 stimulus - 2 response)",
+      "scope": "Global",
+      "intent": "Every occurrence of P is eventually followed by an S and, after that S, by a T (the chain S then T responds to P).",
+      "ltl_template": "G (p -> (F (s & (X (F t)))))",
+      "placeholders": [
+        "p",
+        "s",
+        "t"
+      ],
+      "example_nl": [
+        "every order is eventually followed by a payment and then a shipment",
+        "whenever a fire is detected, an alarm eventually sounds and afterwards the doors unlock",
+        "each defect that is found is eventually triaged and then fixed"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "response_chain_12_before_r",
+      "pattern": "Response Chain (1 stimulus - 2 response)",
+      "scope": "Before R",
+      "intent": "Before the first occurrence of R, every P is followed by an S and then a T, all before R.",
+      "ltl_template": "(F r) -> ((p -> (!r U (s & !r & (X (!r U t))))) U r)",
+      "placeholders": [
+        "p",
+        "r",
+        "s",
+        "t"
+      ],
+      "example_nl": [
+        "before the office closes, every visitor request is followed by a badge being issued and then an escort arriving",
+        "before the release date, every reported bug is confirmed and then patched",
+        "prior to the voyage ending, every distress call is answered and then resolved"
+      ],
+      "notes": "The whole s-then-t chain must complete before the scope-closing r."
+    },
+    {
+      "id": "response_chain_12_after_q",
+      "pattern": "Response Chain (1 stimulus - 2 response)",
+      "scope": "After Q",
+      "intent": "After the first occurrence of Q, whenever P occurs, S holds at that very moment and T eventually follows.",
+      "ltl_template": "G (q -> (G (p -> (s & (X (F t))))))",
+      "placeholders": [
+        "p",
+        "q",
+        "s",
+        "t"
+      ],
+      "example_nl": [
+        "after the workflow is activated, whenever a form is submitted it is validated at once and later archived",
+        "once the plant is running, every alarm is acknowledged immediately and subsequently reported",
+        "after go-live, each transaction is instantly journaled and eventually reconciled"
+      ],
+      "notes": "The canonical After-Q mapping omits the eventuality before s: '[] (Q -> [] (P -> (S & o<> T)))', so s must hold at the moment p occurs. This is a frequently noted asymmetry in the published catalogue; kept verbatim."
+    },
+    {
+      "id": "response_chain_12_between_q_and_r",
+      "pattern": "Response Chain (1 stimulus - 2 response)",
+      "scope": "Between Q and R",
+      "intent": "Between any occurrence of Q and the next R, every P is followed by an S and then a T within the interval.",
+      "ltl_template": "G ((q & (F r)) -> ((p -> (!r U (s & !r & (X (!r U t))))) U r))",
+      "placeholders": [
+        "p",
+        "q",
+        "r",
+        "s",
+        "t"
+      ],
+      "example_nl": [
+        "between login and logout, every file upload is followed by a virus scan and then an index update",
+        "between the race start and the finish, every pit request is followed by a pit stop and then a rejoin",
+        "between curtain up and curtain down, every cue is followed by a light change and then a scene shift"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "response_chain_12_after_q_until_r",
+      "pattern": "Response Chain (1 stimulus - 2 response)",
+      "scope": "After Q until R",
+      "intent": "After any occurrence of Q, and until R, every P is followed by an S and then a T.",
+      "ltl_template": "G (q -> ((p -> (!r U (s & !r & (X (!r U t))))) U (r | (G (p -> (s & (X (F t))))))))",
+      "placeholders": [
+        "p",
+        "q",
+        "r",
+        "s",
+        "t"
+      ],
+      "example_nl": [
+        "after the subscription starts, and until it is cancelled, every invoice is followed by a payment and then a receipt",
+        "once the furnace is lit, and until it is extinguished, every temperature alarm is followed by a damper adjustment and then a stabilization check",
+        "after the shift begins, and until it ends, every incoming call is followed by an answer and then a log entry"
+      ],
+      "notes": "The right-hand disjunct of the outer U is the weak escape for when r never occurs; note the escape's inner obligation 'p -> (s & X F t)' mirrors the immediate-s form of the After-Q mapping, verbatim from the catalogue."
+    },
+    {
+      "id": "constrained_chain_12_global",
+      "pattern": "Constrained Chain (1 stimulus - 2 response with constraint)",
+      "scope": "Global",
+      "intent": "Every occurrence of P is eventually followed by an S and then a T, and Z does not occur between the S and the T.",
+      "ltl_template": "G (p -> (F (s & !z & (X (!z U t)))))",
+      "placeholders": [
+        "p",
+        "s",
+        "t",
+        "z"
+      ],
+      "example_nl": [
+        "every request is eventually granted and then completed, with no cancellation between the grant and the completion",
+        "each takeoff clearance is followed by a takeoff and then a climb report, with no abort in between",
+        "every payment is eventually authorized and then settled, with no chargeback between authorization and settlement"
+      ],
+      "notes": "The constraint z is forbidden only within the s-to-t window, not elsewhere."
+    },
+    {
+      "id": "constrained_chain_12_before_r",
+      "pattern": "Constrained Chain (1 stimulus - 2 response with constraint)",
+      "scope": "Before R",
+      "intent": "Before the first occurrence of R, every P is followed by an S and then a T before R, with no Z between the S and the T.",
+      "ltl_template": "(F r) -> ((p -> (!r U (s & !r & !z & (X ((!r & !z) U t))))) U r)",
+      "placeholders": [
+        "p",
+        "r",
+        "s",
+        "t",
+        "z"
+      ],
+      "example_nl": [
+        "before the deadline, every draft is reviewed and then approved, with no rejection between review and approval",
+        "before the voyage ends, every distress call is answered and then resolved, with no escalation in between",
+        "prior to the store closing, every return is inspected and then refunded, with no dispute between inspection and refund"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "constrained_chain_12_after_q",
+      "pattern": "Constrained Chain (1 stimulus - 2 response with constraint)",
+      "scope": "After Q",
+      "intent": "After the first occurrence of Q, whenever P occurs, S holds at that moment and T eventually follows, with no Z between the S and the T.",
+      "ltl_template": "G (q -> (G (p -> (s & !z & (X (!z U t))))))",
+      "placeholders": [
+        "p",
+        "q",
+        "s",
+        "t",
+        "z"
+      ],
+      "example_nl": [
+        "after go-live, every ticket is immediately assigned and later closed, with no reopening between assignment and closure",
+        "once production starts, each batch is instantly sampled and then certified, with no contamination in between",
+        "after enrollment opens, every application is at once acknowledged and eventually decided, with no withdrawal between the two"
+      ],
+      "notes": "Like the unconstrained 1-2 response chain, the canonical After-Q mapping omits the eventuality before s (s must hold when p occurs); kept verbatim from the catalogue."
+    },
+    {
+      "id": "constrained_chain_12_between_q_and_r",
+      "pattern": "Constrained Chain (1 stimulus - 2 response with constraint)",
+      "scope": "Between Q and R",
+      "intent": "Between any occurrence of Q and the next R, every P is followed by an S and then a T within the interval, with no Z between the S and the T.",
+      "ltl_template": "G ((q & (F r)) -> ((p -> (!r U (s & !r & !z & (X ((!r & !z) U t))))) U r))",
+      "placeholders": [
+        "p",
+        "q",
+        "r",
+        "s",
+        "t",
+        "z"
+      ],
+      "example_nl": [
+        "between shift start and shift end, every order is picked and then packed, with no damage between picking and packing",
+        "between admission and discharge, every prescription is dispensed and then administered, with no substitution in between",
+        "between boarding and departure, every bag is scanned and then loaded, with no rerouting between scan and load"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "constrained_chain_12_after_q_until_r",
+      "pattern": "Constrained Chain (1 stimulus - 2 response with constraint)",
+      "scope": "After Q until R",
+      "intent": "After any occurrence of Q, and until R, every P is followed by an S and then a T, with no Z between the S and the T.",
+      "ltl_template": "G (q -> ((p -> (!r U (s & !r & !z & (X ((!r & !z) U t))))) U (r | (G (p -> (s & !z & (X (!z U t))))))))",
+      "placeholders": [
+        "p",
+        "q",
+        "r",
+        "s",
+        "t",
+        "z"
+      ],
+      "example_nl": [
+        "after the service is enabled, and until it is disabled, every alert is acknowledged and then archived, with no re-trigger between the acknowledgment and the archive",
+        "once the line starts, and until it halts, every jam is cleared and then logged, with no new jam between clearing and logging",
+        "after the watch begins, and until it ends, every contact is reported and then classified, with no loss of track in between"
+      ],
+      "notes": "The right-hand disjunct of the outer U is the weak escape for when r never occurs."
+    },
+    {
+      "id": "responded_existence_global",
+      "pattern": "Responded Existence",
+      "scope": "Global",
+      "intent": "If P occurs at least once, then S must also occur somewhere in the execution (before or after P); unordered co-occurrence.",
+      "ltl_template": "(F p) -> (F s)",
+      "placeholders": [
+        "p",
+        "s"
+      ],
+      "example_nl": [
+        "if a payment is made, a receipt must also be issued at some point",
+        "whenever an error is logged, an alert is also raised somewhere in the run",
+        "if the file is opened, it must also be closed at some point in the trace"
+      ],
+      "notes": "DECLARE process-mining template (Pesic & van der Aalst), NOT part of the Dwyer property-specification catalogue. Unordered co-occurrence; Global scope only. Source: IBM nl2ltl declare.py RespondedExistence.to_ltlf."
+    },
+    {
+      "id": "not_co_existence_global",
+      "pattern": "Not Co-Existence",
+      "scope": "Global",
+      "intent": "P and S are mutually exclusive: they cannot both occur in the same execution.",
+      "ltl_template": "(F p) -> (!(F s))",
+      "placeholders": [
+        "p",
+        "s"
+      ],
+      "example_nl": [
+        "a transaction is never both committed and rolled back",
+        "the door is never both locked and open during a run",
+        "manual mode and automatic mode are never both activated in the same session"
+      ],
+      "notes": "DECLARE process-mining template (Pesic & van der Aalst), NOT in the Dwyer catalogue. Mutual exclusion; symmetric (F p -> !F s is equivalent to F s -> !F p, BLACK-verified). Global scope only. Source: IBM nl2ltl declare.py NotCoExistence.to_ltlf."
+    }
+  ]
+}

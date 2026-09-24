@@ -1,0 +1,27 @@
+type token =
+    YESTERDAY
+  | WEAKUNTIL
+  | UNTIL
+  | TRUE
+  | TRIGGER
+  | SINCE
+  | RPAREN
+  | RELEASE
+  | OR
+  | ONCE
+  | NOT
+  | NEXT
+  | LPAREN
+  | IMPLIES
+  | IFF
+  | IDENT of string
+  | HISTORICALLY
+  | GLOBALLY
+  | FALSE
+  | EVENTUALLY
+  | EOF
+  | AND
+val menhir_begin_marker : int
+val xv_main : Ast.formula
+val xv_formula : Ast.formula
+val menhir_end_marker : int

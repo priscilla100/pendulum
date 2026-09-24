@@ -1,0 +1,29 @@
+[package]
+name    = "pltl_rust"
+version = "0.1.0"
+edition = "2021"
+description = "Typed PLTL AST + JSON glue for the OCaml front-end parser."
+
+[lib]
+path = "src/lib.rs"
+
+# Default binary: end-to-end pretty-printer ('pltl_rust <formula>').
+# Workspace target dir places it at `<root>/target/{debug,release}/pltl_rust`.
+[[bin]]
+name = "pltl_rust"
+path = "src/main.rs"
+
+[dependencies]
+serde      = { workspace = true }
+serde_json = { workspace = true }
+# tempfile is used by the BLACK solver wrapper to write a trace JSON
+# to disk for `black check -t <file>`. Same crate the agent already
+# pulls in, no new transitive deps.
+tempfile   = "3"
+
+# `libc` is used solely for the unix `kill(-pgid, SIGKILL)` call in
+# the SySLite2 timeout path, where we need to kill the whole process
+# group (Python parent + cvc4 grandchild) rather than just the
+# parent.  Linux / macOS only — guarded by `cfg(unix)`.
+[target.'cfg(unix)'.dependencies]
+libc = "0.2"

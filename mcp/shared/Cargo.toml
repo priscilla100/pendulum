@@ -1,0 +1,53 @@
+[package]
+name        = "pltl_mcp_shared"
+version     = "0.1.0"
+edition     = "2021"
+description = "Shared infrastructure for the PLTL-MCP analysis servers: OCaml parser glue, error types, LRU cache, transport CLI, and rmcp server runtime."
+
+[lib]
+path = "src/lib.rs"
+
+[features]
+# The two transports the project actually supports today. Both are on by
+# default so individual MCP-server binaries can ship one image that works
+# in either mode without recompilation.
+#
+# `transport-stdio` — wraps rmcp's `transport-io` feature (stdin/stdout).
+# `transport-http`  — wraps rmcp's `transport-streamable-http-server`.
+#
+# Per the MCP 2025-11 spec, Streamable HTTP replaced the older SSE
+# network transport; rmcp 1.7 no longer ships an SSE *server* module,
+# only `client-side-sse` for talking to legacy SSE servers. See
+# ARCHITECTURE.md §Transport for the deviation note.
+default = ["transport-stdio", "transport-http"]
+transport-stdio = ["rmcp/transport-io"]
+transport-http  = [
+    "rmcp/transport-streamable-http-server",
+    "rmcp/transport-streamable-http-server-session",
+    "dep:axum",
+    "dep:tokio-util",
+]
+
+[dependencies]
+pltl_rust   = { workspace = true }
+anyhow      = { workspace = true }
+serde       = { workspace = true }
+serde_json  = { workspace = true }
+thiserror   = { workspace = true }
+tokio       = { workspace = true }
+tracing     = { workspace = true }
+lru         = { workspace = true }
+clap        = { workspace = true }
+async-trait = { workspace = true }
+schemars    = { workspace = true }
+# rmcp is wired with `default-features = false` at the workspace level so
+# each MCP-server crate picks its own feature surface. Here we pull the
+# server-side runtime + the macro helpers + base64 (for tool content
+# encoding) and let the `transport-*` features above add transports.
+rmcp = { workspace = true, features = ["server", "macros", "schemars", "base64"] }
+
+# HTTP transport — pulled in only when the `transport-http` feature is on.
+# rmcp's streamable_http_server is hosted via axum 0.8 (per the upstream
+# example at examples/servers/src/counter_streamhttp.rs).
+axum       = { version = "0.8.7", optional = true }                # crates.io 2026 stable line
+tokio-util = { version = "0.7.18", optional = true, features = ["rt"] }  # cancellation tokens

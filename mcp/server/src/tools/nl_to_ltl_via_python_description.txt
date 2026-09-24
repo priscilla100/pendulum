@@ -1,0 +1,11 @@
+WHAT: Translate a natural-language sentence into a PLTL formula.
+
+WHEN: Call as the *secondary* translation path, AFTER `nl_to_ltl_via_salt` has failed. 
+INPUTS:
+  - `text`: the user's NL sentence (string, required).
+  - `aps`: the atomic-proposition mapping from `extract_ap_mapping` (object, required). Shape: `{"req": "a request arrives", "ack": "acknowledgment", ...}`. The model is restricted to using only these atom names.
+
+OUTPUTS: `{ok, formula?, error?, raw_python?}`
+  - `ok=true` with `formula` = canonical PLTL surface syntax (e.g. `G (req -> F ack)`).
+  - `ok=false` with `error` = a diagnostic (LLM produced no `formulaToFind` line, Python parse failed, OCaml parser rejected the result).
+  - `raw_python` always carries the model's raw output for debugging.

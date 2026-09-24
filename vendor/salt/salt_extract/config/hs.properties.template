@@ -1,0 +1,59 @@
+#
+# Configuration file for the SALT compiler.
+#
+# In this file, you have to specify where the SALT compiler
+# can find your Haskell interpreter. This is necessary in order
+# to run the compiler. Either Hugs or GHC have to be installed 
+# on the system. 
+#
+# Entries follow the rules for Java property files.
+# 
+
+# -------------------------------------------------------------------
+# General settings
+# -------------------------------------------------------------------
+
+# The Haskell interpreter to be used (hugs or ghc)
+hs.interpreter = hugs
+
+# Optional: The file where the intermediate Haskell code is written to.
+# If not set, a temporal file is used.
+# hs.tempfile =
+
+
+# -------------------------------------------------------------------
+# Hugs-specific settings
+# -------------------------------------------------------------------
+
+# The path to the Hugs Haskell interpreter.
+hugs.path = 
+
+# The command for calling the Hugs Haskell interpreter runhugs 
+# (relative to path).
+# This is runhugs.exe for Windows and runhugs for Linux.
+hugs.command = runhugs.exe
+
+# The path to the Hugs Haskell libraries (relative to path).
+# There seems to be a problem with paths containing spaces.
+hugs.librarypath = libraries
+
+# Additional options to the Hugs Haskell interpreter.
+hugs.options = 
+
+
+# -------------------------------------------------------------------
+# GHC-specific settings
+# -------------------------------------------------------------------
+
+# The path to the GHC Haskell interpreter/compiler.
+# This must be the directory where the executables are located.
+ghc.path = 
+
+# The command for calling the GHC Haskell interpreter runghc 
+# (relative to path)
+# This is runghc.exe for Windows.
+ghc.command = runghc.exe
+
+# Additional options to the GHC Haskell interpreter.
+ghc.options = 
+

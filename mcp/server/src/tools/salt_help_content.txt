@@ -1,0 +1,273 @@
+================================================================
+SALT SPEC GRAMMAR (condensed reference — keep this in mind)
+================================================================
+
+TOP-LEVEL SHAPE
+  [declare p1, p2, ...]        -- optional; declares all atomic props
+  [define name(x, y) := ...]*  -- zero or more macros
+   assert <expression>          -- one or more assertions
+  [assert <expression>]*
+
+- Comments: `--` to end of line.
+- Identifiers: `[A-Za-z_][A-Za-z0-9_]*`. Case-sensitive.
+- Anything that is not a keyword/macro is a boolean variable. Mangle
+  names that collide with reserved words (see below).
+- Boolean literals: `true`, `false`.
+- Quoted atomic propositions: `"queuelength == 0"` is legal — quoted
+  text is passed through verbatim to the LTL output.
+
+RESERVED KEYWORDS (do NOT use as variable names — mangle them):
+  assert define declare true false
+  always never eventually next until releases
+  historically once since triggered previous
+  alwaysinpast eventuallyinpast neverinpast untilinpast releasesinpast
+  nextinpast frominpast uptoinpast betweeninpast occurringinpast
+  holdinginpast nextninpast previousn
+  upto before from after between rejecton accepton
+  occurring holding nextn
+  req opt weak incl excl required optional inclusive exclusive
+  and or not implies equals
+  if then else
+  allof noneof someof exactlyoneof in as list enumerate with without
+  timed
+
+So `until`, `before`, `after` etc are reserved — when the user says
+"stays open until the timer expires", emit `door_open` and
+`tmr_expired` as identifiers, NOT `until`.
+
+QUOTED ATOMIC PROPOSITIONS
+  Any string in double quotes is passed through verbatim as an
+  atomic proposition. Useful when downstream is an SMV model with
+  non-boolean predicates:
+    assert always "queuelength == 0"        -- legal
+    assert working until weak ("queuelength == 0" | abort)
+  AVOID embedded quotes / `$` inside quoted props — the shipped
+  1.0.1 compiler mishandles the escape rules and crashes.
+
+OPERATOR PRECEDENCE (highest → lowest, manual §5.1)
+  1. `( )` parentheses
+  2. `!`  -- symbolic unary boolean
+  3. `& | -> <->`  -- symbolic binary boolean (ALL FOUR have EQUAL
+                     precedence; mixing them without parens triggers
+                     a right-associative parse + a compiler warning).
+  4. `* + ?`  -- regex repetition
+  5. `; :`    -- regex sequence
+  6. prefix macro calls, unary built-ins (`always`, `next`, ...),
+     modifiers (`optional`, ...)
+  7. infix macro calls, binary built-ins (`until`, `and`, ...)
+  8. `if`-`then`, `if`-`then`-`else`, iteration operators
+  Word forms (`and`, `or`, ...) bind LOOSER than their symbolic
+  counterparts (`&`, `|`, ...) because they're parsed as macro
+  calls. WHEN IN DOUBT, PARENTHESISE.
+
+BOOLEAN OPERATORS
+  not        -> `!`  or  `not`
+  and        -> `&`  or  `and`
+  or         -> `|`  or  `or`
+  implies    -> `->` or  `implies`
+  iff        -> `<->` or `equals`
+  if-then    -> `if PHI then PSI`   (no plain else — chain with
+                                     `else if CHI then RHO`, or
+                                     just use `(PHI -> PSI) & (!PHI -> RHO)`)
+
+FUTURE TEMPORAL OPERATORS
+  always PHI            -- G PHI    (PHI now and at every future step)
+  never PHI             -- !(F PHI) (PHI never holds from now on)
+  eventually PHI        -- F PHI    (PHI now or at some future step)
+  next PHI              -- X PHI    (PHI in the next step)
+  next weak PHI         -- weak-next variant
+  PHI until PSI         -- PHI U PSI  (PSI must occur; PHI until then)
+  PHI until weak PSI    -- PHI W PSI  (PHI forever OR PHI until PSI)
+  PHI releases PSI      -- PHI R PSI  (compiles to `V` in SMV; we
+                                       rewrite back to `R`)
+
+EXTENDED `until` (boundary semantics):
+  PHI until excl req PSI    -- == `PHI until PSI`
+  PHI until incl req PSI    -- PSI must occur and PHI holds when it does
+  PHI until excl weak PSI   -- == `PHI until weak PSI`
+  PHI until incl weak PSI   -- PSI releases PHI (= releases with swapped args)
+  PHI until excl opt PSI    -- if PSI holds, PHI holds up to (excl) it
+  PHI until incl opt PSI    -- (F PSI) -> (PHI U (PHI & PSI))
+
+SCOPE OPERATORS — `upto`, `from`, `between`
+  PHI upto    {inclusive|exclusive} {required|optional|weak} b
+  PHI from    {inclusive|exclusive} {required|optional}      a
+  PHI between {inclusive|exclusive} {required|optional}      a,
+              {inclusive|exclusive} {required|optional|weak} b
+  Aliases: `before` = `upto`, `after` = `from`.
+  Short modifier names also work: `req`/`opt`/`incl`/`excl`.
+
+  The two right-side modifiers (incl/excl + req/opt/weak) are MANDATORY
+  on the boundary; omitting them produces a compile error.
+
+  Boundary modifier meanings:
+    - inclusive vs exclusive: is the boundary step itself in scope?
+    - required: boundary MUST happen (else assertion is false).
+    - optional: no boundary means no obligation (true vacuously).
+    - weak:    obligation continues over the whole remaining trace
+               (analogous to `until weak`). Only valid on the `upto`
+               side or on `between`'s end.
+
+  IMPORTANT: scope operators do NOT implicitly wrap their PHI in
+  `always`. Write `always p upto excl req b` if you want p at every
+  step until b. A bare `p upto ...` only checks p at the current step.
+
+  WHICH PHI ARE ACCEPTED AS THE ARGUMENT OF AN *EXCLUSIVE*
+  upto/between (manual §5.3.2):
+    OK without a prefix: `always PHI`, `never PHI`, `eventually PHI`,
+       `PHI until PSI`, `PHI until weak PSI`, `releases`, and any
+       boolean combination (`!`, `&`, `|`, `->`, `<->`) of the above.
+    NEEDS A PREFIX: bare propositions and anything ambiguous on an
+       empty interval. Use `required PHI` (false on empty scope) or
+       `weak PHI` (true on empty scope).
+       Example: `required p upto excl req b` → `(F b) & ((!b) & p)`;
+                `weak p upto excl req b`     → `(F b) & (b | p)`.
+       Bare `p upto excl req b` errors: "Explicit required or weak
+       needed".
+    The restriction does NOT apply to INCLUSIVE upto/between — an
+    inclusive boundary guarantees the interval is at least one step.
+
+  PAST OPERATORS ARE UNBOUNDED INSIDE FUTURE SCOPES.
+  `from`/`upto`/`between` do NOT constrain past operators in their
+  argument. `(always (x -> once y)) from incl req a` allows `y` to
+  have occurred arbitrarily far back in time — before `a`. To limit
+  `once y` to the time after `a`, use the past-scope variant:
+  `once y uptoinpast incl req a`.
+
+REGULAR EXPRESSIONS (SREs; forbidden under `forbid_next=true`)
+  / e1 ; e2 : e3 ; e4 /        -- sequence
+  / e * /                       -- Kleene star (0+ steps); arg MUST be
+                                --   purely boolean
+  / e + /                       -- 1+ steps; arg MUST be purely boolean
+  / e ? /                       -- 0 or 1 step
+  / e *[=n] / e *[n] /          -- exactly n consecutive steps
+  / e *[n..m] /                 -- between n and m steps
+  / e *[>n] / e *[>=n] /        -- more / at least n; arg MUST be boolean
+  / e *[<n] / e *[<=n] /        -- fewer / at most n
+  / e1 / | / e2 /               -- alternation
+
+  Sequence operators:
+    `;`  = "then in the next step"
+    `:`  = "then overlapping by one step" (`p:q` == `p & q` for props)
+
+  IMPORTANT (manual §4.4): SREs DO NOT EXCLUDE UNNAMED CONDITIONS.
+  `/a;b/` says "in the current step a holds, and in the next step b
+  holds" — it does NOT say anything about other propositions. A trace
+  where a and b both happen to hold in both steps still matches
+  `/a;b/`. If the requirement is "*only* a then *only* b", add
+  explicit negations: `/(a & !b); (b & !a)/`.
+
+  EMPTY ELEMENTS DEFAULT TO `true`:
+    `/*;a/` is `/true*;a/` — "eventually a", with no constraint on
+    what holds before a. So `/a;*/` is just `/a/`. Don't emit either
+    by accident. If the intent is "for several steps p holds, then
+    q", write `/p+; q/` NOT `/p*; q/`.
+
+  Within a single regex, all elements EXCEPT THE LAST must be
+  purely boolean or other regexes joined by `|`. The last element
+  can be any SALT expression.
+
+  PAST REGEX uses BACKSLASHES instead of forward slashes:
+  `\a;b;c\` — same shape as forward regex but reads backward in time.
+  Same constraints apply.
+
+PAST TEMPORAL OPERATORS (fully supported)
+  once PHI              -- O PHI (eventually-in-past)
+  historically PHI      -- H PHI (always-in-past)
+  previous PHI          -- Y PHI (strict yesterday)
+  previous weak PHI     -- weak yesterday (never literally emitted in
+                          SMV — pre-translated to `!(Y(!PHI))`)
+  PHI since PSI         -- PHI S PSI
+  PHI since weak PSI    -- weak Since
+  PHI triggered PSI     -- PHI T PSI (past-time Release)
+  neverinpast PHI       -- never holds in the past
+
+COUNTING (manual §5.3.5)
+  occurring[=n] PHI      -- exactly n CONSECUTIVE RUNS of PHI, ever
+  occurring[<=n] PHI     -- at most n runs (no more after the last)
+  occurring[>=n] PHI     -- at least n runs (more are allowed)
+  occurring[n..m] PHI    -- between n and m runs (no more after last)
+  holding[=n] PHI        -- exactly n STEPS where PHI holds
+  holding[<=n] PHI       -- at most n steps total
+  (similar `>=n`, `[n..m]`, `<n`, `<=n` forms)
+
+  Bounded forms (`[=n]`, `[<=n]`, `[n..m]`) impose a "no more after"
+  rule — after the last counted occurrence, PHI must NEVER hold again.
+  Use `[>=n]` or unbounded forms when continued occurrence is OK.
+
+NEXT-N CHAINS
+  nextn[=n] PHI          -- exactly n steps from now (X X ... X PHI)
+  nextn[<=n] PHI         -- within n steps
+  nextn[n..m] PHI        -- some step in [n,m]
+  (forbidden if forbid_next is true)
+
+EXCEPTION OPERATORS
+  PHI rejecton b         -- abort PHI as FALSE if b fires before PHI met
+  PHI accepton b         -- abort PHI as TRUE  if b fires before PHI violated
+
+ITERATION OVER A LIST OF PROPS
+  allof  enumerate[1..4] as i in eventually p_$i$_done   -- conjunction
+  someof list[a, b, c]   as x in always x                -- disjunction
+  noneof <list>          as ...                          -- conj. of negations
+  exactlyoneof <list>    as ...                          -- one-hot
+
+  `$i$` interpolates the index/value into atom names.
+
+MACROS
+  define mymacro(x, y) := x implies eventually y
+  assert request mymacro answer        -- infix call form
+  assert mymacro(request, answer)      -- explicit form
+  define any_p := p1 | p2 | p3         -- nullary macro
+  assert always any_p
+
+  Macros must appear BEFORE the first `assert` line.
+
+================================================================
+TRANSLATION PATTERNS (NL → SALT → LTL)
+================================================================
+
+| Pattern (NL)                          | SALT                                                            | Resulting LTL (after V→R rewrite)   |
+|---------------------------------------|-----------------------------------------------------------------|-------------------------------------|
+| X always holds                        | `assert always x`                                               | `G x`                               |
+| X never holds                         | `assert never x`                                                | `!(F x)`                            |
+| X eventually holds                    | `assert eventually x`                                           | `F x`                               |
+| Every request is eventually answered  | `assert always (request implies eventually answer)`             | `G (request -> (F answer))`         |
+| X stays true until Y (Y must occur)   | `assert x until y`                                              | `x U y`                             |
+| X until Y, but Y may not occur        | `assert x until weak y`                                         | desugared, weak-until equivalent    |
+| Result returns before terminating     | `assert (eventually result) before exclusive required term`     | `(F term) & ((!term) U (result & (!term)))` |
+| Once Y, X holds forever after         | `assert (always x) from inclusive optional y`                   | `G (y -> (G x))`                    |
+| Answer is preceded by request (past)  | `define precedes(x,y) := if y then once x` <br> `assert always (request precedes answer)` | `G (answer -> (O request))` |
+| At most 2 elevator arrivals in scope  | `assert always (occurring[<=2] atfloor between incl optional call, excl optional open)` | (≈30 nested Us — paste downstream)  |
+| Exactly one of n channels active      | `assert always (exactlyoneof enumerate[0..3] as i in in_$i$)`   | One-hot disjunction                 |
+| All n processes eventually finish     | `assert allof enumerate[1..4] as i in eventually p_$i$_done`    | Conjunction over i                  |
+
+ANTI-PATTERNS (will compile-error or silently misbehave):
+  - Any `timed[~c]` operator — blocked by `-notimed`.
+  - Forgetting `inclusive/exclusive` + `required/optional/weak` on
+    `upto`/`from`/`between`.
+  - Regex `*` / `+` on a non-boolean argument.
+  - Combining SREs with `->` or `&` (only `|` alternation is allowed
+    between regexes).
+  - Bare `p upto excl req b` without `required p ...` or `weak p ...`
+    in front — error: "Explicit required or weak needed".
+
+================================================================
+PROCESS (do this every time you call this tool)
+================================================================
+
+1. Read the NL twice. Look for trigger words: "always", "never",
+   "eventually", "until", "before", "after", "between", "once",
+   "since", "if-then", "only when".
+2. Map nouns/predicates to identifiers. Mangle reserved words
+   (`door_open`, not `until`).
+3. Draft ONE `assert <expression>` matching the pattern.
+4. Call `nl_to_ltl_via_salt` with `spec` set to that string.
+5. If `ok=true`: pass `ltl` to `parse_and_canonicalize` to confirm
+   syntax, then emit the final answer.
+6. If `ok=false`: read the verbatim `error`, fix the spec, retry.
+   Common fixes: add missing modifiers on scope operators, wrap a
+   bare prop in `always`/`required`/`weak`, escape reserved words.
+
+NOTE: SALT runs in a docker container (`salt-compiler:latest`). Build
+once with `docker build -t salt-compiler:latest vendor/salt/`. The
+tool surfaces a clear error if the image is missing.

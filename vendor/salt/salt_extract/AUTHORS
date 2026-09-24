@@ -1,0 +1,15 @@
+SALT Compiler 
+
+DEVELOPERS
+Jonathan Streit
+
+CONTRIBUTIONS FROM
+Andreas Bauer
+Martin Leucker
+
+EXAMPLE SPECIFICATIONS
+Matthew B. Dwyer, George S. Avrunin, James C. Corbett and Laura Dillon
+Leonid Kof
+
+THIRD PARTY SOFTWARE USED
+ANTLR parser generator by Terence Parr (public domain)

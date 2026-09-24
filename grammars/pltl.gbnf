@@ -1,0 +1,90 @@
+# PLTL GBNF — grammar for llama.cpp grammar-forced decoding.
+#
+# Derived directly from `ocaml/parser.mly`. The precedence layers below
+# mirror the parser's `%right`/`%left`/`%nonassoc` directives, lowest
+# precedence at the top, tightest binding at the bottom:
+#
+#     <->                                       right-assoc  (iff)
+#     ->                                        right-assoc  (impl)
+#     |                                         left-assoc   (or)
+#     &                                         left-assoc   (and)
+#     U  S  W  R  T   (binary temporal)         right-assoc
+#     !  X  Y  F  G  O  H   (unary prefix)      bind tightest
+#     atoms / true / false / "(" formula ")"    primary
+#
+# Surface form is canonical: matches what the Rust `Display` impl in
+# `rust/src/ast.rs` emits (letter-form operators G/F/X/Y/H/O for unary,
+# U/S/W/R/T for binary; `!` for negation; `&`/`|`/`->`/`<->` for
+# boolean connectives). The OCaml lexer accepts many other spellings
+# ([]p, <>p, henceforth p, \G p, ...), but we constrain generation to
+# ONE canonical form to keep the grammar small and the search tight.
+#
+# Atoms follow `ocaml/lexer.mll`'s `lower_id` rule:
+#   lowercase letter, then any of lowercase / digit / underscore.
+#
+# Binary boolean and binary-temporal nodes are emitted fully
+# parenthesized so the output round-trips through
+# Display -> OCaml-parse without ambiguity, matching what
+# `rust/src/ast.rs::Display for Formula` produces.
+#
+# Whitespace is permissive: `ws` (zero or more spaces) sits between
+# every token. We do NOT include newlines or tabs in the surface set
+# because the model isn't asked to pretty-print across lines.
+#
+# References:
+#   * GBNF syntax: https://github.com/ggml-org/llama.cpp/blob/master/grammars/README.md
+#   * llama.cpp uses BNF-ish: `::=` for rules, `[...]` for char classes,
+#     `*`/`+`/`?` for repetition, `|` for alternation.
+
+# Top-level: a complete formula, padded with optional whitespace.
+root        ::= ws iff-expr ws
+
+# Layer 1: biconditional (lowest precedence, right-associative).
+# Recursion on the RHS gives right-associativity: a <-> b <-> c
+# parses as a <-> (b <-> c).
+iff-expr    ::= impl-expr (ws "<->" ws iff-expr)?
+
+# Layer 2: implication, right-associative.
+impl-expr   ::= or-expr  (ws "->"  ws impl-expr)?
+
+# Layer 3: disjunction, left-associative.
+# Left-associativity in GBNF is encoded by recursion on the LHS of the
+# tail repetition: head followed by zero or more "| rhs" tails.
+or-expr     ::= and-expr (ws "|"   ws and-expr)*
+
+# Layer 4: conjunction, left-associative.
+and-expr    ::= bin-temp (ws "&"   ws bin-temp)*
+
+# Layer 5: binary temporal (U, S, W, R, T), right-associative.
+# Same RHS recursion trick as iff/impl.
+bin-temp    ::= unary-expr (ws bin-temp-op ws bin-temp)?
+
+bin-temp-op ::= "U" | "S" | "W" | "R" | "T"
+
+# Layer 6: unary prefix operators (tightest binding).
+# Allowing the chain (`! G F p`) by recursing on `unary-expr` matches
+# the OCaml parser, which lets unary tokens stack with no parens.
+# NOTE: alternations must stay on ONE line — llama.cpp's GBNF parser
+# (verified on build b9860, July 2026) rejects continuation lines that
+# start with `|`.
+unary-expr  ::= unary-op ws unary-expr | primary
+
+unary-op    ::= "!" | "X" | "Y" | "F" | "G" | "O" | "H"
+
+# Layer 7: primary — atom, boolean constant, or parenthesized formula.
+primary     ::= "true" | "false" | atom | "(" ws iff-expr ws ")"
+
+# Atoms — `lower_id` from `ocaml/lexer.mll`:
+#   lowercase letter, then lowercase / digit / underscore.
+# `true` and `false` are reserved (handled above as constants); GBNF
+# can't easily exclude them from the atom rule, but the model is
+# heavily biased toward emitting the constants directly by the rule
+# order. The OCaml lexer would tokenise `true`/`false` as constants
+# anyway, so a model that emits `true` as an atom would still parse
+# correctly.
+atom        ::= [a-z] [a-z0-9_]*
+
+# Whitespace: zero or more spaces between tokens. We deliberately do
+# not allow tabs/newlines — the model is expected to emit a single
+# formula on a single line.
+ws          ::= [ ]*

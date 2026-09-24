@@ -1,0 +1,1459 @@
+{
+ "name": "unambiguous50",
+ "version": 1,
+ "criteria": "dual-reviewer (claude+codex) unambiguity approval; parse+BLACK-contingency validated; tiers by AST metrics",
+ "entries": [
+  {
+   "id": "u50_very_easy_01",
+   "tier": "very_easy",
+   "source": "vltl_bench",
+   "source_id": "vltl_warehouse_34",
+   "nl": "This controller must always avoid waiting.",
+   "nl_original": "This controller must always avoid waiting.",
+   "nl_edited": false,
+   "formula": "G !idle",
+   "ap_map": {
+    "idle": "wait"
+   },
+   "metrics": {
+    "unary_t": 1,
+    "binary_t": 0,
+    "temporal": 1,
+    "past": 0,
+    "boolean": 0,
+    "depth": 0,
+    "atoms": 1
+   },
+   "rationale": "Clean global safety requirement: 'always avoid waiting' maps uniquely to G !idle with the atom map.",
+   "reviewers": {
+    "codex": "keep",
+    "claude": "keep"
+   }
+  },
+  {
+   "id": "u50_very_easy_02",
+   "tier": "very_easy",
+   "source": "vltl_bench",
+   "source_id": "vltl_search_and_rescue_72",
+   "nl": "The robot must always avoid calling for help.",
+   "nl_original": "The robot must always avoid calling for help.",
+   "nl_edited": false,
+   "formula": "G !get_help",
+   "ap_map": {
+    "get_help": "call for help"
+   },
+   "metrics": {
+    "unary_t": 1,
+    "binary_t": 0,
+    "temporal": 1,
+    "past": 0,
+    "boolean": 0,
+    "depth": 0,
+    "atoms": 1
+   },
+   "rationale": "Unambiguous always-not obligation; the sentence explicitly supplies global scope and negates the mapped call-for-help atom.",
+   "reviewers": {
+    "codex": "keep",
+    "claude": "keep"
+   }
+  },
+  {
+   "id": "u50_very_easy_03",
+   "tier": "very_easy",
+   "source": "vltl_bench",
+   "source_id": "vltl_warehouse_160",
+   "nl": "The robot must eventually call for help or idle.",
+   "nl_original": "The robot must eventually call for help or idle.",
+   "nl_edited": false,
+   "formula": "F (get_help | idle)",
+   "ap_map": {
+    "get_help": "call for help",
+    "idle": "idle"
+   },
+   "metrics": {
+    "unary_t": 1,
+    "binary_t": 0,
+    "temporal": 1,
+    "past": 0,
+    "boolean": 1,
+    "depth": 1,
+    "atoms": 2
+   },
+   "rationale": "Clear eventuality with a boolean disjunction; 'eventually call for help or idle' exactly matches F (get_help | idle).",
+   "reviewers": {
+    "codex": "keep",
+    "claude": "keep"
+   }
+  },
+  {
+   "id": "u50_very_easy_04",
+   "tier": "very_easy",
+   "source": "vltl_bench",
+   "source_id": "vltl_warehouse_2037",
+   "nl": "The robot must eventually stand by and get help.",
+   "nl_original": "The robot must eventually stand by and get help.",
+   "nl_edited": false,
+   "formula": "F (idle & get_help)",
+   "ap_map": {
+    "get_help": "get help",
+    "idle": "stand by"
+   },
+   "metrics": {
+    "unary_t": 1,
+    "binary_t": 0,
+    "temporal": 1,
+    "past": 0,
+    "boolean": 1,
+    "depth": 1,
+    "atoms": 2
+   },
+   "rationale": "The eventual temporal scope is explicit, and the conjunction is naturally simultaneous under the atom map: eventually idle/stand-by and get_help.",
+   "reviewers": {
+    "codex": "keep",
+    "claude": "keep"
+   }
+  },
+  {
+   "id": "u50_very_easy_05",
+   "tier": "very_easy",
+   "source": "vltl_bench",
+   "source_id": "vltl_search_and_rescue_450",
+   "nl": "Return to base holds at all times.",
+   "nl_original": "Return to base holds at all times.",
+   "nl_edited": false,
+   "formula": "G go_home",
+   "ap_map": {
+    "go_home": "return to base"
+   },
+   "metrics": {
+    "unary_t": 1,
+    "binary_t": 0,
+    "temporal": 1,
+    "past": 0,
+    "boolean": 0,
+    "depth": 0,
+    "atoms": 1
+   },
+   "rationale": "Simple positive invariant with explicit 'at all times' wording; go_home is directly mapped to return to base.",
+   "reviewers": {
+    "codex": "keep",
+    "claude": "keep"
+   }
+  },
+  {
+   "id": "u50_very_easy_06",
+   "tier": "very_easy",
+   "source": "synthtl",
+   "source_id": "synthtl_020",
+   "nl": "In the current cycle, HREADY is low.",
+   "nl_original": "HREADY is low",
+   "nl_edited": true,
+   "formula": "!hready",
+   "ap_map": {
+    "hready": "hready"
+   },
+   "metrics": {
+    "unary_t": 0,
+    "binary_t": 0,
+    "temporal": 0,
+    "past": 0,
+    "boolean": 0,
+    "depth": 0,
+    "atoms": 1
+   },
+   "rationale": "Compact but clear current-state negation: 'HREADY is low' unambiguously denotes !hready in this hardware signal context.",
+   "reviewers": {
+    "codex": "keep",
+    "claude": "keep"
+   }
+  },
+  {
+   "id": "u50_very_easy_07",
+   "tier": "very_easy",
+   "source": "synthtl",
+   "source_id": "synthtl_047",
+   "nl": "If HWRITE is asserted, WR is asserted.",
+   "nl_original": "HWRITE is used to decide values of WR",
+   "nl_edited": true,
+   "formula": "(hwrite -> wr)",
+   "ap_map": {
+    "hwrite": "hwrite",
+    "wr": "wr"
+   },
+   "metrics": {
+    "unary_t": 0,
+    "binary_t": 0,
+    "temporal": 0,
+    "past": 0,
+    "boolean": 1,
+    "depth": 1,
+    "atoms": 2
+   },
+   "rationale": "The implication formula is plausible but the original 'used to decide' wording is broader than one-way implication, so the edit pins down the intended direction.",
+   "reviewers": {
+    "codex": "keep",
+    "claude": "keep"
+   }
+  },
+  {
+   "id": "u50_very_easy_08",
+   "tier": "very_easy",
+   "source": "synthtl",
+   "source_id": "synthtl_032",
+   "nl": "HADDR is true exactly when ADDR is true.",
+   "nl_original": "signal HADDR is used to decide ADDR",
+   "nl_edited": true,
+   "formula": "(haddri <-> addri)",
+   "ap_map": {
+    "haddri": "haddri",
+    "addri": "addri"
+   },
+   "metrics": {
+    "unary_t": 0,
+    "binary_t": 0,
+    "temporal": 0,
+    "past": 0,
+    "boolean": 1,
+    "depth": 1,
+    "atoms": 2
+   },
+   "rationale": "Useful equivalence example, but 'used to decide' does not by itself force biconditional semantics; the edit makes the exact correspondence explicit.",
+   "reviewers": {
+    "codex": "keep",
+    "claude": "keep"
+   }
+  },
+  {
+   "id": "u50_very_easy_09",
+   "tier": "very_easy",
+   "source": "vltl_bench",
+   "source_id": "vltl_warehouse_2431",
+   "nl": "In this task, wait continuously until get help occurs.",
+   "nl_original": "In this task, wait, then get help.",
+   "nl_edited": true,
+   "formula": "(idle U get_help)",
+   "ap_map": {
+    "get_help": "get help",
+    "idle": "wait"
+   },
+   "metrics": {
+    "unary_t": 0,
+    "binary_t": 1,
+    "temporal": 1,
+    "past": 0,
+    "boolean": 0,
+    "depth": 1,
+    "atoms": 2
+   },
+   "rationale": "The intended strong-until formula is good, but 'then' alone can be read as simple sequencing; the edit states continuous waiting and eventual help.",
+   "reviewers": {
+    "codex": "keep",
+    "claude": "keep"
+   }
+  },
+  {
+   "id": "u50_very_easy_10",
+   "tier": "very_easy",
+   "source": "vltl_bench",
+   "source_id": "vltl_warehouse_4185",
+   "nl": "The agent must avoid waiting until it finds the kitty, and it must eventually find the kitty.",
+   "nl_original": "Wait can only happen after finding the kitty.",
+   "nl_edited": true,
+   "formula": "(!idle U search_cat)",
+   "ap_map": {
+    "idle": "wait",
+    "search_cat": "find kitty"
+   },
+   "metrics": {
+    "unary_t": 0,
+    "binary_t": 1,
+    "temporal": 1,
+    "past": 0,
+    "boolean": 0,
+    "depth": 1,
+    "atoms": 2
+   },
+   "rationale": "The formula cleanly captures no waiting before an eventual kitty-finding event, but the original 'can only happen after' does not require the event to occur.",
+   "reviewers": {
+    "codex": "keep",
+    "claude": "keep"
+   }
+  },
+  {
+   "id": "u50_very_easy_11",
+   "tier": "very_easy",
+   "source": "internal",
+   "source_id": "63058/217851",
+   "nl": "Until, but not necessarily including, the first unauthorized transaction attempt, fraud warnings are triggered exactly when unauthorized attempts are detected; if no attempt ever occurs, that equivalence holds forever.",
+   "nl_original": "The system must trigger fraud warnings exactly when unauthorized transaction attempts are detected, and this strict correspondence must hold continuously until an unauthorized attempt occurs. Even if no unauthorized attempts ever happen, the warning system must maintain this exact equivalence indefinitely.",
+   "nl_edited": true,
+   "formula": "((u <-> w) W u)",
+   "ap_map": {
+    "u": "\"an unauthorized transaction attempt is detected\"",
+    "w": "\"a fraud warning is triggered\""
+   },
+   "metrics": {
+    "unary_t": 0,
+    "binary_t": 1,
+    "temporal": 1,
+    "past": 0,
+    "boolean": 1,
+    "depth": 2,
+    "atoms": 2
+   },
+   "rationale": "Adds a finance/security weak-until plus biconditional example with an explicit atom map; the edit clarifies that the equivalence is only required before the first unauthorized attempt or forever if none occurs.",
+   "reviewers": {
+    "codex": "keep",
+    "claude": "keep"
+   }
+  },
+  {
+   "id": "u50_easy_01",
+   "tier": "easy",
+   "source": "vltl_bench",
+   "source_id": "vltl_warehouse_954",
+   "nl": "Globally, it is not the case that both idle and get help hold simultaneously.",
+   "nl_original": "Globally, it is not the case that both idle and get help hold simultaneously.",
+   "nl_edited": false,
+   "formula": "G !(idle & get_help)",
+   "ap_map": {
+    "get_help": "get help",
+    "idle": "idle"
+   },
+   "metrics": {
+    "unary_t": 1,
+    "binary_t": 0,
+    "temporal": 1,
+    "past": 0,
+    "boolean": 2,
+    "depth": 1,
+    "atoms": 2
+   },
+   "rationale": "Excellent exact match: the sentence explicitly says globally and rules out simultaneous idle and get_help, matching G !(idle & get_help).",
+   "reviewers": {
+    "codex": "keep",
+    "claude": "keep"
+   }
+  },
+  {
+   "id": "u50_easy_02",
+   "tier": "easy",
+   "source": "vltl_bench",
+   "source_id": "vltl_traffic_light_1392",
+   "nl": "Set east light green and set west light red are mutually exclusive at all times.",
+   "nl_original": "Set east light green and set west light red are mutually exclusive at all times.",
+   "nl_edited": false,
+   "formula": "G !(change_light_east_green & change_light_west_red)",
+   "ap_map": {
+    "change_light_east_green": "set east light green",
+    "change_light_west_red": "set west light red"
+   },
+   "metrics": {
+    "unary_t": 1,
+    "binary_t": 0,
+    "temporal": 1,
+    "past": 0,
+    "boolean": 2,
+    "depth": 1,
+    "atoms": 2
+   },
+   "rationale": "Clear global mutual exclusion over two mapped traffic-light actions; no hidden temporal scope beyond the stated 'at all times'.",
+   "reviewers": {
+    "codex": "keep",
+    "claude": "keep"
+   }
+  },
+  {
+   "id": "u50_easy_03",
+   "tier": "easy",
+   "source": "vltl_bench",
+   "source_id": "vltl_warehouse_3801",
+   "nl": "Remain still and retrieve the motorcycle are mutually exclusive at all times.",
+   "nl_original": "Remain still and retrieve the motorcycle are mutually exclusive at all times.",
+   "nl_edited": false,
+   "formula": "G !(idle & pickup_motorbike)",
+   "ap_map": {
+    "idle": "remain still",
+    "pickup_motorbike": "retrieve motorcycle"
+   },
+   "metrics": {
+    "unary_t": 1,
+    "binary_t": 0,
+    "temporal": 1,
+    "past": 0,
+    "boolean": 2,
+    "depth": 1,
+    "atoms": 2
+   },
+   "rationale": "Clean always-mutual-exclusion example over incompatible robot actions; retained despite template similarity because the mapping is precise.",
+   "reviewers": {
+    "codex": "keep",
+    "claude": "keep"
+   }
+  },
+  {
+   "id": "u50_easy_04",
+   "tier": "easy",
+   "source": "vltl_bench",
+   "source_id": "vltl_search_and_rescue_2961",
+   "nl": "Globally, it is not the case that both go home and record unstable beam hold simultaneously.",
+   "nl_original": "Globally, it is not the case that both go home and record unstable beam hold simultaneously.",
+   "nl_edited": false,
+   "formula": "G !(go_home & record_unstable_beam)",
+   "ap_map": {
+    "go_home": "go home",
+    "record_unstable_beam": "record unstable beam"
+   },
+   "metrics": {
+    "unary_t": 1,
+    "binary_t": 0,
+    "temporal": 1,
+    "past": 0,
+    "boolean": 2,
+    "depth": 1,
+    "atoms": 2
+   },
+   "rationale": "Exact global mutual exclusion in a different domain from the traffic and warehouse examples; the atom map directly matches the English.",
+   "reviewers": {
+    "codex": "keep",
+    "claude": "keep"
+   }
+  },
+  {
+   "id": "u50_easy_05",
+   "tier": "easy",
+   "source": "vltl_bench",
+   "source_id": "vltl_warehouse_5588",
+   "nl": "Whenever stand by and get help are equal, get help and locate the hound are equal as well.",
+   "nl_original": "Whenever stand by and get help are equal, get help and locate the hound are equal as well.",
+   "nl_edited": false,
+   "formula": "G ((idle <-> get_help) -> (get_help <-> search_dog))",
+   "ap_map": {
+    "get_help": "get help",
+    "idle": "stand by",
+    "search_dog": "locate hound"
+   },
+   "metrics": {
+    "unary_t": 1,
+    "binary_t": 0,
+    "temporal": 1,
+    "past": 0,
+    "boolean": 3,
+    "depth": 2,
+    "atoms": 3
+   },
+   "rationale": "Strong non-template example: 'whenever' plus 'are equal' directly supports the global implication between two biconditionals.",
+   "reviewers": {
+    "codex": "keep",
+    "claude": "keep"
+   }
+  },
+  {
+   "id": "u50_easy_06",
+   "tier": "easy",
+   "source": "synthtl",
+   "source_id": "synthtl_040",
+   "nl": "In the next step, the address and data buses shall hold their current values.",
+   "nl_original": "address and data buses shall hold their values",
+   "nl_edited": true,
+   "formula": "((addri <-> X addri) & (dii <-> X dii))",
+   "ap_map": {
+    "addri": "addri",
+    "dii": "dii"
+   },
+   "metrics": {
+    "unary_t": 2,
+    "binary_t": 0,
+    "temporal": 2,
+    "past": 0,
+    "boolean": 3,
+    "depth": 2,
+    "atoms": 2
+   },
+   "rationale": "Good use of X and biconditional for value-holding, but the original wording could be read as an indefinite hold rather than one-step stability.",
+   "reviewers": {
+    "codex": "keep",
+    "claude": "keep"
+   }
+  },
+  {
+   "id": "u50_easy_07",
+   "tier": "easy",
+   "source": "internal",
+   "source_id": "103136/217594",
+   "nl": "At the current state, the vehicle is either out of manual control mode, or the safety override activation coincides precisely with whether a collision avoidance maneuver will eventually be triggered.",
+   "nl_original": "The vehicle either remains out of manual control mode, or the safety override activation coincides precisely with whether a collision avoidance maneuver will eventually be triggered.",
+   "nl_edited": true,
+   "formula": "(!v | (s <-> F q))",
+   "ap_map": {
+    "v": "manual control mode active",
+    "s": "safety override system engaged",
+    "q": "collision avoidance maneuver triggered"
+   },
+   "metrics": {
+    "unary_t": 1,
+    "binary_t": 0,
+    "temporal": 1,
+    "past": 0,
+    "boolean": 2,
+    "depth": 2,
+    "atoms": 3
+   },
+   "rationale": "Good mixed Boolean/eventual formula: the sentence names manual-control exclusion and exact equivalence with eventual collision avoidance. A small edit prevents reading 'remains out' as globally out.",
+   "reviewers": {
+    "codex": "keep",
+    "claude": "keep"
+   }
+  },
+  {
+   "id": "u50_easy_08",
+   "tier": "easy",
+   "source": "internal",
+   "source_id": "65289/217442",
+   "nl": "At the current state, either user authentication is active, or if weak encryption is eventually discontinued, the security protocol is enforced in the next state.",
+   "nl_original": "The system must either maintain continuous user authentication, or ensure that whenever weak encryption is eventually discontinued, the security protocol becomes enforced immediately in the next step.",
+   "nl_edited": true,
+   "formula": "(u | (F !w -> X s))",
+   "ap_map": {
+    "u": "user authentication is active",
+    "w": "weak encryption is being used",
+    "s": "security protocol is enforced"
+   },
+   "metrics": {
+    "unary_t": 2,
+    "binary_t": 0,
+    "temporal": 2,
+    "past": 0,
+    "boolean": 2,
+    "depth": 2,
+    "atoms": 3
+   },
+   "rationale": "Useful combination of disjunction, eventuality, implication, and next-step response. The edit makes the current-state disjunction and F-to-X relationship explicit.",
+   "reviewers": {
+    "codex": "keep",
+    "claude": "keep"
+   }
+  },
+  {
+   "id": "u50_easy_09",
+   "tier": "easy",
+   "source": "internal",
+   "source_id": "105951/217733",
+   "nl": "A transaction is flagged as unauthorized exactly when there is an active transaction request that either passes fraud checks or maintains an existing unauthorized flag.",
+   "nl_original": "A transaction is flagged as unauthorized exactly when there is an active transaction request that either passes fraud checks or maintains an existing unauthorized flag.",
+   "nl_edited": false,
+   "formula": "(u <-> (t & (s | u)))",
+   "ap_map": {
+    "t": "transaction initiation request",
+    "s": "successful fraud check completion",
+    "u": "unauthorized transaction flag"
+   },
+   "metrics": {
+    "unary_t": 0,
+    "binary_t": 0,
+    "temporal": 0,
+    "past": 0,
+    "boolean": 3,
+    "depth": 3,
+    "atoms": 3
+   },
+   "rationale": "The biconditional is explicit ('exactly when'), and the nested conjunction/disjunction matches the transaction request plus fraud-check-or-existing-flag condition.",
+   "reviewers": {
+    "codex": "keep",
+    "claude": "keep"
+   }
+  },
+  {
+   "id": "u50_easy_10",
+   "tier": "easy",
+   "source": "synthtl",
+   "source_id": "synthtl_030",
+   "nl": "The slave is involved in a transfer now: hsel is asserted and either htransnonseq or htransseq is asserted.",
+   "nl_original": "slave is involved in a transfer",
+   "nl_edited": true,
+   "formula": "(hsel & (htransnonseq | htransseq))",
+   "ap_map": {
+    "hsel": "hsel",
+    "htransnonseq": "htransnonseq",
+    "htransseq": "htransseq"
+   },
+   "metrics": {
+    "unary_t": 0,
+    "binary_t": 0,
+    "temporal": 0,
+    "past": 0,
+    "boolean": 2,
+    "depth": 2,
+    "atoms": 3
+   },
+   "rationale": "Compact but reasonable domain mapping: being involved in a transfer is formalized as hsel with either non-sequential or sequential transfer. The edit removes reliance on bus-domain shorthand.",
+   "reviewers": {
+    "codex": "keep",
+    "claude": "keep"
+   }
+  },
+  {
+   "id": "u50_medium_01",
+   "tier": "medium",
+   "source": "vltl_bench",
+   "source_id": "vltl_traffic_light_9043",
+   "nl": "Update east light red must hold until update south light red does, or else update east light red holds forever.",
+   "nl_original": "Update east light red must hold until update south light red does, or else update east light red holds forever.",
+   "nl_edited": false,
+   "formula": "((change_light_east_red U change_light_south_red) | G change_light_east_red)",
+   "ap_map": {
+    "change_light_east_red": "update east light red",
+    "change_light_south_red": "update south light red"
+   },
+   "metrics": {
+    "unary_t": 1,
+    "binary_t": 1,
+    "temporal": 2,
+    "past": 0,
+    "boolean": 1,
+    "depth": 2,
+    "atoms": 2
+   },
+   "rationale": "Excellent explicit weak-until paraphrase: east-red holds until south-red, with the forever fallback spelled out by 'or else'.",
+   "reviewers": {
+    "codex": "keep",
+    "claude": "keep"
+   }
+  },
+  {
+   "id": "u50_medium_02",
+   "tier": "medium",
+   "source": "vltl_bench",
+   "source_id": "vltl_traffic_light_4538",
+   "nl": "Once switch north light green has occurred, set west light green will never occur again.",
+   "nl_original": "Once switch north light green has occurred, set west light green will never occur again.",
+   "nl_edited": false,
+   "formula": "G (change_light_north_green -> X G !change_light_west_green)",
+   "ap_map": {
+    "change_light_north_green": "switch north light green",
+    "change_light_west_green": "set west light green"
+   },
+   "metrics": {
+    "unary_t": 3,
+    "binary_t": 0,
+    "temporal": 3,
+    "past": 0,
+    "boolean": 1,
+    "depth": 1,
+    "atoms": 2
+   },
+   "rationale": "Clean trigger-and-prohibition property: after every north-green switch, west-green is forbidden from the following step forever, matching X G ! precisely.",
+   "reviewers": {
+    "codex": "keep",
+    "claude": "keep"
+   }
+  },
+  {
+   "id": "u50_medium_03",
+   "tier": "medium",
+   "source": "vltl_bench",
+   "source_id": "vltl_warehouse_4690",
+   "nl": "Either get help happens infinitely often, or idle happens in the next step.",
+   "nl_original": "Either get help happens infinitely often, or idle happens in the next step.",
+   "nl_edited": false,
+   "formula": "(G F get_help | X idle)",
+   "ap_map": {
+    "get_help": "get help",
+    "idle": "idle"
+   },
+   "metrics": {
+    "unary_t": 3,
+    "binary_t": 0,
+    "temporal": 3,
+    "past": 0,
+    "boolean": 1,
+    "depth": 1,
+    "atoms": 2
+   },
+   "rationale": "Unambiguous liveness/next disjunction: 'infinitely often' maps to G F and 'in the next step' maps to X without hidden obligations.",
+   "reviewers": {
+    "codex": "keep",
+    "claude": "keep"
+   }
+  },
+  {
+   "id": "u50_medium_04",
+   "tier": "medium",
+   "source": "vltl_bench",
+   "source_id": "vltl_search_and_rescue_724",
+   "nl": "If return to base ever holds, request assistance must have held beforehand.",
+   "nl_original": "If return to base ever holds, request assistance must have held beforehand.",
+   "nl_edited": false,
+   "formula": "(F go_home -> (!go_home U (get_help & !go_home)))",
+   "ap_map": {
+    "get_help": "request assistance",
+    "go_home": "return to base"
+   },
+   "metrics": {
+    "unary_t": 1,
+    "binary_t": 1,
+    "temporal": 2,
+    "past": 0,
+    "boolean": 2,
+    "depth": 3,
+    "atoms": 2
+   },
+   "rationale": "The 'if ever' antecedent plus strict 'beforehand' requirement is well captured by F go_home implying no go_home until an earlier get_help occurrence.",
+   "reviewers": {
+    "codex": "keep",
+    "claude": "keep"
+   }
+  },
+  {
+   "id": "u50_medium_05",
+   "tier": "medium",
+   "source": "internal",
+   "source_id": "87452/217567",
+   "nl": "The transaction remains pending until validation succeeds or a retry process begins in the next processing step; if neither ever occurs, it remains pending forever.",
+   "nl_original": "The transaction will remain in a pending state until either successful validation occurs or a retry process begins in the next processing step.",
+   "nl_edited": true,
+   "formula": "(s W (v | X r))",
+   "ap_map": {
+    "s": "transaction remains pending",
+    "v": "transaction validation succeeds",
+    "r": "retry process initiates"
+   },
+   "metrics": {
+    "unary_t": 1,
+    "binary_t": 1,
+    "temporal": 2,
+    "past": 0,
+    "boolean": 1,
+    "depth": 2,
+    "atoms": 3
+   },
+   "rationale": "Good weak-until example with a next-step subcondition; all atoms are mapped and the formula matches if the fallback pending-forever case is made explicit.",
+   "reviewers": {
+    "codex": "keep",
+    "claude": "keep"
+   }
+  },
+  {
+   "id": "u50_medium_06",
+   "tier": "medium",
+   "source": "internal",
+   "source_id": "30684/217534",
+   "nl": "If a code review is not initiated in the next step, pending changes must remain present until automated validation fails.",
+   "nl_original": "If a code review is not initiated in the next step, pending changes must remain present until automated validation fails.",
+   "nl_edited": false,
+   "formula": "(X !r -> (p U !v))",
+   "ap_map": {
+    "r": "\"a code review is initiated\"",
+    "p": "\"pending code changes exist in the system\"",
+    "v": "\"automated validation passes\""
+   },
+   "metrics": {
+    "unary_t": 1,
+    "binary_t": 1,
+    "temporal": 2,
+    "past": 0,
+    "boolean": 1,
+    "depth": 2,
+    "atoms": 3
+   },
+   "rationale": "The condition, X scope, strong until, and negated validation atom are all explicit; the AP map removes any ambiguity about validation failure as !v.",
+   "reviewers": {
+    "codex": "keep",
+    "claude": "keep"
+   }
+  },
+  {
+   "id": "u50_medium_07",
+   "tier": "medium",
+   "source": "internal",
+   "source_id": "81592/217637",
+   "nl": "Until maintenance mode activates, and forever if it never activates, valid client requests must receive 200 OK responses exactly when 200 OK responses occur only for valid requests.",
+   "nl_original": "Until maintenance mode activates, valid client requests must always receive 200 OK responses and 200 OK responses must only occur for valid requests. After maintenance activates, this mutual dependency may cease.",
+   "nl_edited": true,
+   "formula": "(q R (t <-> u))",
+   "ap_map": {
+    "q": "q",
+    "t": "t",
+    "u": "u"
+   },
+   "metrics": {
+    "unary_t": 0,
+    "binary_t": 1,
+    "temporal": 1,
+    "past": 0,
+    "boolean": 1,
+    "depth": 2,
+    "atoms": 3
+   },
+   "rationale": "Strong release candidate: mutual dependency before maintenance and optional cessation afterward match q R (t <-> u), with the no-maintenance case needing only a small clarification.",
+   "reviewers": {
+    "codex": "keep",
+    "claude": "keep"
+   }
+  },
+  {
+   "id": "u50_medium_08",
+   "tier": "medium",
+   "source": "internal",
+   "source_id": "96642/217606",
+   "nl": "The system continuously retries API requests until an update is processed or a termination signal is received and remains active permanently; if neither condition ever occurs, retries continue forever.",
+   "nl_original": "The system will continuously retry API requests until either an update is successfully processed or a termination signal is received and remains active permanently.",
+   "nl_edited": true,
+   "formula": "(r W (u | G t))",
+   "ap_map": {
+    "r": "r",
+    "t": "t",
+    "u": "u"
+   },
+   "metrics": {
+    "unary_t": 1,
+    "binary_t": 1,
+    "temporal": 2,
+    "past": 0,
+    "boolean": 1,
+    "depth": 2,
+    "atoms": 3
+   },
+   "rationale": "Useful W example combining weak retry persistence with an eventual processed-update or permanent termination condition; the weak fallback should be stated directly.",
+   "reviewers": {
+    "codex": "keep",
+    "claude": "keep"
+   }
+  },
+  {
+   "id": "u50_medium_09",
+   "tier": "medium",
+   "source": "synthtl",
+   "source_id": "synthtl_003",
+   "nl": "Whenever hready holds during a non-first AHB transfer marked NONSEQ, the next transfer will be SEQ in nature.",
+   "nl_original": "Non-first transfer of an AHB sequence will always be SEQ in nature.",
+   "nl_edited": true,
+   "formula": "G (((!last & htransnonseq) & hready) -> X htransseq)",
+   "ap_map": {
+    "last": "last",
+    "htransnonseq": "htransnonseq",
+    "hready": "hready",
+    "htransseq": "htransseq"
+   },
+   "metrics": {
+    "unary_t": 2,
+    "binary_t": 0,
+    "temporal": 2,
+    "past": 0,
+    "boolean": 3,
+    "depth": 3,
+    "atoms": 4
+   },
+   "rationale": "Valuable hardware-domain G/X rule, but the NL omits hready and the next-cycle nature of X; adding those makes the formula exact.",
+   "reviewers": {
+    "codex": "keep",
+    "claude": "keep"
+   }
+  },
+  {
+   "id": "u50_medium_10",
+   "tier": "medium",
+   "source": "internal",
+   "source_id": "97015/217456",
+   "nl": "The corrective action activates exactly when the grid stabilization signal remains continuously present until the local power threshold is exceeded, and remains present forever if the threshold is never exceeded.",
+   "nl_original": "The corrective action activates exactly when the grid stabilization signal remains continuously present until (and only stops when) the local power threshold is exceeded.",
+   "nl_edited": true,
+   "formula": "(r <-> (t R s))",
+   "ap_map": {
+    "r": "r",
+    "s": "s",
+    "t": "t"
+   },
+   "metrics": {
+    "unary_t": 0,
+    "binary_t": 1,
+    "temporal": 1,
+    "past": 0,
+    "boolean": 1,
+    "depth": 2,
+    "atoms": 3
+   },
+   "rationale": "Good small release/equivalence example: corrective action is equivalent to continuous stabilization up to threshold exceedance, with a weak fallback that should be explicit.",
+   "reviewers": {
+    "codex": "keep",
+    "claude": "keep"
+   }
+  },
+  {
+   "id": "u50_hard_01",
+   "tier": "hard",
+   "source": "internal",
+   "source_id": "80584/217883",
+   "nl": "Until valid authentication occurs, warnings must never trigger unless unauthorized access is guaranteed to be absent in the immediately following step. This obligation persists until authentication releases it.",
+   "nl_original": "Until valid authentication occurs, warnings must never trigger unless unauthorized access is guaranteed to be absent in the immediately following step. This obligation persists until authentication releases it.",
+   "nl_edited": false,
+   "formula": "(v R (!w W !X u))",
+   "ap_map": {
+    "v": "valid authentication occurs",
+    "w": "security warning is triggered",
+    "u": "unauthorized access is detected"
+   },
+   "metrics": {
+    "unary_t": 0,
+    "binary_t": 2,
+    "temporal": 2,
+    "past": 0,
+    "boolean": 0,
+    "depth": 2,
+    "atoms": 3
+   },
+   "rationale": "Strong match with explicit release by valid authentication. The warning prohibition and next-step absence exception map cleanly to !w W !X u under v R, and the atom map is clear.",
+   "reviewers": {
+    "codex": "keep",
+    "claude": "keep"
+   }
+  },
+  {
+   "id": "u50_hard_02",
+   "tier": "hard",
+   "source": "internal",
+   "source_id": "26275/217489",
+   "nl": "The conveyor must keep running while the temperature alarm is active and may only stop after the alarm clears, unless a manual override is engaged - this running requirement persists until the override activates.",
+   "nl_original": "The conveyor must keep running while the temperature alarm is active and may only stop after the alarm clears, unless a manual override is engaged - this running requirement persists until the override activates.",
+   "nl_edited": false,
+   "formula": "(q R (t W !p))",
+   "ap_map": {
+    "p": "high temperature alarm active",
+    "q": "manual override engaged",
+    "t": "conveyor belt running"
+   },
+   "metrics": {
+    "unary_t": 0,
+    "binary_t": 2,
+    "temporal": 2,
+    "past": 0,
+    "boolean": 0,
+    "depth": 2,
+    "atoms": 3
+   },
+   "rationale": "Clear safety obligation with a release condition: conveyor running is required while the alarm remains active, alarm clearance permits stopping, and manual override releases the requirement.",
+   "reviewers": {
+    "codex": "keep",
+    "claude": "keep"
+   }
+  },
+  {
+   "id": "u50_hard_03",
+   "tier": "hard",
+   "source": "internal",
+   "source_id": "70335/217510",
+   "nl": "The unreliable transmission mode must remain continuously active until either a session reset occurs exactly when queues will stabilize next, persisting indefinitely unless packet loss is detected. If packet loss occurs, this requirement stops after its first detection.",
+   "nl_original": "The unreliable transmission mode must remain continuously active until either a session reset occurs exactly when queues will stabilize next, persisting indefinitely unless packet loss is detected. If packet loss occurs, this requirement stops after its first detection.",
+   "nl_edited": false,
+   "formula": "(p R (u W (s <-> X q)))",
+   "ap_map": {
+    "p": "\"packet loss is detected\"",
+    "u": "\"unreliable transmission mode is active\"",
+    "s": "\"session reset request received\"",
+    "q": "\"network queues stabilize\""
+   },
+   "metrics": {
+    "unary_t": 1,
+    "binary_t": 2,
+    "temporal": 3,
+    "past": 0,
+    "boolean": 1,
+    "depth": 3,
+    "atoms": 4
+   },
+   "rationale": "Good alignment between packet loss as the releasing event and unreliable mode persisting until the reset/next-queue-stability condition. The weak-until inner obligation is explicit in the English.",
+   "reviewers": {
+    "codex": "keep",
+    "claude": "keep"
+   }
+  },
+  {
+   "id": "u50_hard_04",
+   "tier": "hard",
+   "source": "internal",
+   "source_id": "77275/217795",
+   "nl": "The server must keep its safe configuration continuously until either: 1) It permanently enters a state where acknowledgments are always awaited until an update completes, while remaining safe throughout, or 2) Safely maintains its configuration indefinitely if no update sequence initiates.",
+   "nl_original": "The server must keep its safe configuration continuously until either: 1) It permanently enters a state where acknowledgments are always awaited until an update completes, while remaining safe throughout, or 2) Safely maintains its configuration indefinitely if no update sequence initiates.",
+   "nl_edited": false,
+   "formula": "(s W (s & (G w U u)))",
+   "ap_map": {
+    "s": "server maintains safe configuration",
+    "w": "system waits for acknowledgment messages",
+    "u": "update installation completes successfully"
+   },
+   "metrics": {
+    "unary_t": 1,
+    "binary_t": 2,
+    "temporal": 3,
+    "past": 0,
+    "boolean": 1,
+    "depth": 3,
+    "atoms": 3
+   },
+   "rationale": "The server safety requirement is explicit, and the weak-until structure matches the stated indefinite safe-configuration alternative if no update completion condition occurs.",
+   "reviewers": {
+    "codex": "keep",
+    "claude": "keep"
+   }
+  },
+  {
+   "id": "u50_hard_05",
+   "tier": "hard",
+   "source": "synthtl",
+   "source_id": "synthtl_004",
+   "nl": "For a locked INCR4 nonsequential transfer accepted with HREADY, the burst sequence of length four shall end at the fourth occurrence of HREADY.",
+   "nl_original": "Burst sequence of length four shall end at fourth occurrence of HREADY.",
+   "nl_edited": true,
+   "formula": "G ((((hlock & hburstincr4) & hready) & htransnonseq) -> X (htransseq U ((htransseq & hready) & X (htransseq U ((htransseq & hready) & X (htransseq U hready))))))",
+   "ap_map": {
+    "hlock": "hlock",
+    "hburstincr4": "hburstincr4",
+    "hready": "hready",
+    "htransnonseq": "htransnonseq",
+    "htransseq": "htransseq"
+   },
+   "metrics": {
+    "unary_t": 4,
+    "binary_t": 3,
+    "temporal": 7,
+    "past": 0,
+    "boolean": 8,
+    "depth": 6,
+    "atoms": 5
+   },
+   "rationale": "The formula is a precise fourth-HREADY sequence property with useful X/U nesting and a clear hardware domain. The only weakness is that the antecedent includes HLOCK and the initial transfer shape, which the original sentence leaves implicit.",
+   "reviewers": {
+    "codex": "keep",
+    "claude": "keep"
+   }
+  },
+  {
+   "id": "u50_hard_06",
+   "tier": "hard",
+   "source": "internal",
+   "source_id": "17499/217725",
+   "nl": "The robot cannot complete its task unless a warning is first issued, and this restriction must continue until completion occurs. If the task remains incomplete, the robot may either never warn or issue warnings without completing.",
+   "nl_original": "The robot cannot complete its task unless a warning is first issued, and this restriction must continue until completion occurs. If the task remains incomplete, the robot may either never warn or issue warnings without completing.",
+   "nl_edited": false,
+   "formula": "((!t W w) W t)",
+   "ap_map": {
+    "t": "t",
+    "w": "w"
+   },
+   "metrics": {
+    "unary_t": 0,
+    "binary_t": 2,
+    "temporal": 2,
+    "past": 0,
+    "boolean": 0,
+    "depth": 2,
+    "atoms": 2
+   },
+   "rationale": "The sentence explicitly distinguishes the no-completion case from the warning-before-completion restriction, which fits the nested weak-until structure well. It is ranked lower because the atom map is missing.",
+   "reviewers": {
+    "codex": "keep",
+    "claude": "keep"
+   }
+  },
+  {
+   "id": "u50_hard_07",
+   "tier": "hard",
+   "source": "internal",
+   "source_id": "91888/217457",
+   "nl": "The system may roll back versions or eventually trigger a code review, and this state persists until a code review is initiated and remains active until a release is deployed.",
+   "nl_original": "The system may roll back versions or eventually trigger a code review, and this state persists until a code review is initiated and remains active until a release is deployed.",
+   "nl_edited": false,
+   "formula": "((v | F t) W (t U r))",
+   "ap_map": {
+    "r": "r",
+    "t": "t",
+    "v": "v"
+   },
+   "metrics": {
+    "unary_t": 1,
+    "binary_t": 2,
+    "temporal": 3,
+    "past": 0,
+    "boolean": 1,
+    "depth": 2,
+    "atoms": 3
+   },
+   "rationale": "Captures a state that may persist weakly until a review-active-until-release phase begins. The temporal scope is reasonably explicit, though the missing atom map reduces curation value.",
+   "reviewers": {
+    "codex": "keep",
+    "claude": "keep"
+   }
+  },
+  {
+   "id": "u50_hard_08",
+   "tier": "hard",
+   "source": "internal",
+   "source_id": "66768/217863",
+   "nl": "Maintain continuous calibration until either production halts before calibration completes (allowing calibration to end), or if production continues through calibration, quality validation must stay permanently enabled thereafter.",
+   "nl_original": "Maintain continuous calibration until either production halts before calibration completes (allowing calibration to end), or if production continues through calibration, quality validation must stay permanently enabled thereafter.",
+   "nl_edited": false,
+   "formula": "(u U ((p W u) -> G q))",
+   "ap_map": {
+    "p": "p",
+    "q": "q",
+    "u": "u"
+   },
+   "metrics": {
+    "unary_t": 1,
+    "binary_t": 2,
+    "temporal": 3,
+    "past": 0,
+    "boolean": 1,
+    "depth": 3,
+    "atoms": 3
+   },
+   "rationale": "The calibration-until decision point and permanent validation consequence are stated clearly enough for the implication under U. Ranked lower because the atom map is empty and production/calibration roles must be inferred.",
+   "reviewers": {
+    "codex": "keep",
+    "claude": "keep"
+   }
+  },
+  {
+   "id": "u50_hard_09",
+   "tier": "hard",
+   "source": "internal",
+   "source_id": "76239/217466",
+   "nl": "The build process remains active if and only if it either continues running until deployment succeeds, or a system failure persists continuously until (and including) the moment the build stops, whichever occurs first.",
+   "nl_original": "The build process remains active if and only if it either continues running until deployment succeeds, or a system failure persists continuously until (and including) the moment the build stops, whichever occurs first.",
+   "nl_edited": false,
+   "formula": "(p <-> (p W (q | (!p R s))))",
+   "ap_map": {
+    "p": "\"build process is active\"",
+    "q": "\"deployment succeeds\"",
+    "s": "\"system failure persists\""
+   },
+   "metrics": {
+    "unary_t": 0,
+    "binary_t": 2,
+    "temporal": 2,
+    "past": 0,
+    "boolean": 2,
+    "depth": 4,
+    "atoms": 3
+   },
+   "rationale": "The iff and two alternatives are present, and the failure-persists-through-build-stop phrase supports the release subformula. The wording is somewhat overloaded, but the atom map makes the intended reading recoverable.",
+   "reviewers": {
+    "codex": "keep",
+    "claude": "keep"
+   }
+  },
+  {
+   "id": "u50_hard_10",
+   "tier": "hard",
+   "source": "internal",
+   "source_id": "69010/217525",
+   "nl": "The machine may stay in warning state indefinitely, but if it exits, every warning must trigger shutdown until the warning clears in the next operational step.",
+   "nl_original": "The machine may stay in warning state indefinitely, but if it exits, every warning must trigger shutdown until the warning clears in the next operational step.",
+   "nl_edited": false,
+   "formula": "(w W ((w -> t) R X !w))",
+   "ap_map": {
+    "t": "t",
+    "w": "w"
+   },
+   "metrics": {
+    "unary_t": 1,
+    "binary_t": 2,
+    "temporal": 3,
+    "past": 0,
+    "boolean": 1,
+    "depth": 3,
+    "atoms": 2
+   },
+   "rationale": "The warning-state indefinite alternative and the exit-triggered shutdown obligation are fairly explicit. It is not as strong as higher-ranked items because the release subformula is harder to read from the English and no atom map is supplied.",
+   "reviewers": {
+    "codex": "keep",
+    "claude": "keep"
+   }
+  },
+  {
+   "id": "u50_impossible_01",
+   "tier": "impossible",
+   "source": "synthtl",
+   "source_id": "synthtl_023",
+   "nl": "In the next cycle, all control signals, address buses, and data buses shall hold their current values.",
+   "nl_original": "all control signals, address and data buses shall hold their values.",
+   "nl_edited": true,
+   "formula": "(((((((((htransnonseq <-> X htransnonseq) & (htransseq <-> X htransseq)) & (htransidle <-> X htransidle)) & (hburstsingle <-> X hburstsingle)) & (hburstincr4 <-> X hburstincr4)) & (hburstincr <-> X hburstincr)) & (haddri <-> X haddri)) & (hwdatai <-> X hwdatai)) & (doi <-> X doi))",
+   "ap_map": {
+    "htransnonseq": "htransnonseq",
+    "htransseq": "htransseq",
+    "htransidle": "htransidle",
+    "hburstsingle": "hburstsingle",
+    "hburstincr4": "hburstincr4",
+    "hburstincr": "hburstincr",
+    "haddri": "haddri",
+    "hwdatai": "hwdatai",
+    "doi": "doi"
+   },
+   "metrics": {
+    "unary_t": 9,
+    "binary_t": 0,
+    "temporal": 9,
+    "past": 0,
+    "boolean": 17,
+    "depth": 9,
+    "atoms": 9
+   },
+   "rationale": "Cleanest semantic match: every listed control/address/data signal is constrained to equal its next value, with no hidden domain assumptions. It is also source-diverse versus the internal synthetic examples.",
+   "reviewers": {
+    "codex": "keep",
+    "claude": "keep"
+   }
+  },
+  {
+   "id": "u50_impossible_02",
+   "tier": "impossible",
+   "source": "internal",
+   "source_id": "23540/217629",
+   "nl": "The system must eventually verify consistency (v). Until verification: write requests must repeat infinitely often until every write triggers a commit (w -> t), then commits must persist in each subsequent step until no future immediate update conflicts occur (!F X u) while maintaining a next-step commit (X t), with this sequence continuing until verification.",
+   "nl_original": "The system must eventually verify consistency (v). Until verification: write requests must repeat infinitely until every write triggers a commit (w‚Üít), then commits must persist in each subsequent step until no future immediate update conflicts occur (¬¨‚óä‚óØu) while maintaining commits (‚óØt), with this entire sequence continuing until verification.",
+   "nl_edited": true,
+   "formula": "(G F w U ((w -> t) U ((!F X u R X t) U v)))",
+   "ap_map": {
+    "w": "write request pending",
+    "t": "transaction commit succeeds",
+    "u": "update conflict detected",
+    "v": "system-wide consistency verification completes"
+   },
+   "metrics": {
+    "unary_t": 4,
+    "binary_t": 4,
+    "temporal": 8,
+    "past": 0,
+    "boolean": 1,
+    "depth": 4,
+    "atoms": 4
+   },
+   "rationale": "The sentence explicitly describes the outer until-verification structure, the infinitely recurring write requests, write-to-commit implication, and the no-future-immediate-conflict/next-commit release segment.",
+   "reviewers": {
+    "codex": "keep",
+    "claude": "keep"
+   }
+  },
+  {
+   "id": "u50_impossible_03",
+   "tier": "impossible",
+   "source": "internal",
+   "source_id": "44661/217698",
+   "nl": "The system guarantees: Either (1) starting immediately, overheating persists until shutdown activates or eventually shutdown becomes permanent, exactly when (2) manual override continues until overheating-triggered cooling replaces perpetual safe mode requirements, provided safe mode is active now with ground confirmation.",
+   "nl_original": "The system guarantees: Either (1) starting immediately, overheating persists until shutdown activates or eventually shutdown becomes permanent, exactly when (2) manual override continues until overheating-triggered cooling replaces perpetual safe mode requirements, provided safe mode is active now with ground confirmation.",
+   "nl_edited": false,
+   "formula": "(((X r U u) | F X G u) <-> ((q & s) & (t W ((r -> w) R G s))))",
+   "ap_map": {
+    "r": "engine overheating detected",
+    "u": "emergency shutdown activated",
+    "t": "manual override engaged",
+    "w": "cooling system active",
+    "s": "system in safe mode",
+    "q": "ground control confirmation received"
+   },
+   "metrics": {
+    "unary_t": 5,
+    "binary_t": 3,
+    "temporal": 8,
+    "past": 0,
+    "boolean": 5,
+    "depth": 5,
+    "atoms": 6
+   },
+   "rationale": "The iff is explicit, the left side names the immediate-overheating-until-shutdown or eventual permanent-shutdown disjunction, and the right side cleanly includes current safe mode/ground confirmation plus manual override through cooling/safe-mode requirements.",
+   "reviewers": {
+    "codex": "keep",
+    "claude": "keep"
+   }
+  },
+  {
+   "id": "u50_impossible_04",
+   "tier": "impossible",
+   "source": "internal",
+   "source_id": "100882/217473",
+   "nl": "If an under-voltage condition persists, and backup generation activates, then: (1) voltage must stabilize until the next state where backup generation sustains both stable voltage and met demand, and (2) the under-voltage condition must continue until quiescent mode engages unless the voltage recovers first.",
+   "nl_original": "If an under-voltage condition persists, and backup generation activates, then: (1) voltage must stabilize until the next state where backup generation sustains both stable voltage and met demand, and (2) the under-voltage condition must continue until quiescent mode engages unless the voltage recovers first.",
+   "nl_edited": false,
+   "formula": "(G u -> (s -> ((F v U (X s R (p & v))) & (G u U (q W !u)))))",
+   "ap_map": {
+    "u": "under-voltage condition",
+    "s": "backup generation activated",
+    "v": "voltage stabilizes",
+    "p": "power demand met",
+    "q": "quiescent mode enabled"
+   },
+   "metrics": {
+    "unary_t": 4,
+    "binary_t": 4,
+    "temporal": 8,
+    "past": 0,
+    "boolean": 4,
+    "depth": 6,
+    "atoms": 5
+   },
+   "rationale": "The power-grid condition is well scoped: globally persistent under-voltage implies backup activation leads to two conjunctive until obligations. The 'unless voltage recovers first' wording supports the weak-until branch.",
+   "reviewers": {
+    "codex": "keep",
+    "claude": "keep"
+   }
+  },
+  {
+   "id": "u50_impossible_05",
+   "tier": "impossible",
+   "source": "internal",
+   "source_id": "66554/217788",
+   "nl": "Starting now, always-next renewable surplus persists until storage fills, keeping backups active until utilization begins; that state weakly continues until a renewable surplus period occurs in which backup activation is equivalent to no grid-stability warning, sustained until utilization is triggered.",
+   "nl_original": "Globally, starting from the next state: Renewable surplus must persist until storage fills, which keeps backups active until utilization begins. This state weakly continues until a renewable surplus period occurs where backup activation coincides exactly with grid stability (no warnings), sustained until utilization is triggered.",
+   "nl_edited": true,
+   "formula": "(G X r U (p R (t R (u W (r U ((t <-> !w) U u))))))",
+   "ap_map": {
+    "r": "renewable generation exceeds demand",
+    "p": "power storage reaches full capacity",
+    "t": "backup generators are activated",
+    "u": "stored energy is utilized",
+    "w": "grid stability warning is issued"
+   },
+   "metrics": {
+    "unary_t": 2,
+    "binary_t": 6,
+    "temporal": 8,
+    "past": 0,
+    "boolean": 1,
+    "depth": 7,
+    "atoms": 5
+   },
+   "rationale": "Strong domain variety and unusually explicit weak continuation. The sentence maps the renewable surplus, storage full, backup activation, utilization, and backup/no-warning equivalence atoms without obvious atom drift.",
+   "reviewers": {
+    "codex": "keep",
+    "claude": "keep"
+   }
+  },
+  {
+   "id": "u50_impossible_06",
+   "tier": "impossible",
+   "source": "internal",
+   "source_id": "79383/217440",
+   "nl": "The network connection remains stable at all times until the system reaches a permanent state excluding both: unacknowledged packets persisting until recovery activates, and sustained high throughput continuing until received packets complete processing.",
+   "nl_original": "The network connection remains stable at all times until eventually, the system permanently stops scenarios where either: unacknowledged packets persist until recovery activates, or sustained high throughput continues until received packets complete processing after being held.",
+   "nl_edited": true,
+   "formula": "(F !F ((!(r -> q) W F u) | (G w W (r U p))) R G v)",
+   "ap_map": {
+    "v": "stable connection",
+    "r": "packet received",
+    "q": "packet acknowledged",
+    "u": "recovery protocol triggered",
+    "w": "high transmission rate",
+    "p": "packet processing completed"
+   },
+   "metrics": {
+    "unary_t": 4,
+    "binary_t": 4,
+    "temporal": 8,
+    "past": 0,
+    "boolean": 3,
+    "depth": 4,
+    "atoms": 6
+   },
+   "rationale": "The networking example has a coherent release-style reading: stable connection is maintained while the system eventually permanently excludes either unacknowledged packets awaiting recovery or high-throughput received packets awaiting processing.",
+   "reviewers": {
+    "codex": "keep",
+    "claude": "keep"
+   }
+  },
+  {
+   "id": "u50_impossible_07",
+   "tier": "impossible",
+   "source": "internal",
+   "source_id": "13239/217478",
+   "nl": "Either initiate a blackout immediately, or maintain load redistribution until preventive maintenance activates, unless eventually a generator fault is detected or sustained transformer overload leads to a blackout that persists until manual override is issued during a future blackout event.",
+   "nl_original": "Either initiate a blackout immediately, or maintain load redistribution until preventive maintenance activates, unless eventually a generator fault is detected or sustained transformer overload leads to a blackout that persists until manual override is issued during a future blackout event.",
+   "nl_edited": false,
+   "formula": "(w | (F (q | (G t U (w R (w W (u & F w))))) R (r W p)))",
+   "ap_map": {
+    "q": "generator fault detected",
+    "t": "transformer overload condition",
+    "w": "controlled blackout initiated",
+    "u": "manual override command",
+    "r": "load redistribution protocol",
+    "p": "preventive maintenance mode"
+   },
+   "metrics": {
+    "unary_t": 3,
+    "binary_t": 5,
+    "temporal": 8,
+    "past": 0,
+    "boolean": 3,
+    "depth": 7,
+    "atoms": 6
+   },
+   "rationale": "The immediate blackout disjunct is exact, and the rest clearly names load redistribution weakly/unless maintenance, generator fault, transformer overload, blackout persistence, manual override, and future blackout occurrence.",
+   "reviewers": {
+    "codex": "keep",
+    "claude": "keep"
+   }
+  },
+  {
+   "id": "u50_impossible_08",
+   "tier": "impossible",
+   "source": "internal",
+   "source_id": "21538/217448",
+   "nl": "Either, weakly until renewables are permanently sustained, it eventually holds that grid stress implies backup activation and voltage regulation; or backups stay active weakly until permanent voltage regulation begins, with renewables matching wind power use until thermal generation stops.",
+   "nl_original": "Either eventually, if grid stress occurs, backup activation and voltage regulation must persist until renewables are permanently sustained; or backups must stay active until either permanent voltage regulation begins (requiring renewables to match wind power use until thermal generation stops) indefinitely.",
+   "nl_edited": true,
+   "formula": "((F (s -> (q & v)) W G r) | (G q W (G v R (r <-> (w W !t)))))",
+   "ap_map": {
+    "s": "grid stress detected",
+    "q": "backup generators activated",
+    "v": "voltage regulation initiated",
+    "r": "renewable energy feed sustained",
+    "w": "wind power integration enabled",
+    "t": "thermal generation active"
+   },
+   "metrics": {
+    "unary_t": 4,
+    "binary_t": 4,
+    "temporal": 8,
+    "past": 0,
+    "boolean": 4,
+    "depth": 5,
+    "atoms": 6
+   },
+   "rationale": "Useful grid-domain variant with explicit disjunction and permanent renewables/voltage regulation clauses. The weak-until/release distinction is slightly compressed but recoverable from 'until ... indefinitely'.",
+   "reviewers": {
+    "codex": "keep",
+    "claude": "keep"
+   }
+  },
+  {
+   "id": "u50_impossible_09",
+   "tier": "impossible",
+   "source": "internal",
+   "source_id": "40280/217664",
+   "nl": "The deprecated API version remains available until either a client warning is issued or it remains available until a next state with both a warning and enforced rate limits. Eventually, this availability weakly persists through rate limits until service termination, and every warning implies rate limiting through termination.",
+   "nl_original": "The deprecated API version must remain available until either a client warning is issued or it persists until the next state where both a warning exists and rate limits are enforced. Eventually, the deprecated version will stay available (unless replaced by rate limits persisting until termination) until service termination occurs, with every warning triggering continuous rate limiting until termination.",
+   "nl_edited": true,
+   "formula": "((v R (w | (v R (r & X w)))) & (F v W (r U (t U ((t & (w -> r)) U t)))))",
+   "ap_map": {
+    "v": "API version deprecated",
+    "w": "client warning issued",
+    "r": "rate limit exceeded",
+    "t": "service termination"
+   },
+   "metrics": {
+    "unary_t": 2,
+    "binary_t": 6,
+    "temporal": 8,
+    "past": 0,
+    "boolean": 5,
+    "depth": 7,
+    "atoms": 4
+   },
+   "rationale": "The API lifecycle scenario is operator-rich but mostly faithful: warning/rate-limit/termination atoms are clear, and the later clause explicitly states warnings trigger continuous rate limiting until termination.",
+   "reviewers": {
+    "codex": "keep",
+    "claude": "keep"
+   }
+  }
+ ]
+}

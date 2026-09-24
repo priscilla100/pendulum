@@ -1,0 +1,39 @@
+[package]
+name        = "pltl_mcp_server"
+version     = "0.1.0"
+edition     = "2021"
+description = "Parameterized MCP server: registers any subset of the PLTL analysis tools via `--tools` at runtime."
+
+[lib]
+path = "src/lib.rs"
+
+[[bin]]
+name = "pltl-mcp"
+path = "src/main.rs"
+
+[features]
+default = ["transport-stdio", "transport-sse"]
+transport-stdio = ["pltl_mcp_shared/transport-stdio"]
+# "sse" here is the user-facing flag name per BUILD_PLAN §3. The
+# underlying transport is rmcp 1.7's `transport-streamable-http-server`
+# (MCP's successor to plain SSE) — see mcp/shared/ARCHITECTURE.md.
+transport-sse   = ["pltl_mcp_shared/transport-http"]
+
+[dependencies]
+pltl_rust          = { workspace = true }
+pltl_mcp_shared    = { workspace = true }
+anyhow             = { workspace = true }
+thiserror          = { workspace = true }
+async-trait        = { workspace = true }
+clap               = { workspace = true }
+tokio              = { workspace = true }
+tracing            = { workspace = true }
+tracing-subscriber = { workspace = true }
+serde              = { workspace = true }
+serde_json         = { workspace = true }
+schemars           = { workspace = true }
+rmcp               = { workspace = true, features = ["server", "macros", "schemars"] }
+reqwest            = { workspace = true }
+
+[dev-dependencies]
+futures = { workspace = true }

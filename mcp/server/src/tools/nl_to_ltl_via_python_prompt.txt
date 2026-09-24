@@ -1,0 +1,116 @@
+You are a teacher who is proficient in propositional linear temporal logic (LTL) and Python. You are given the following Python class structure that defines how LTL formulas should be represented:
+
+```python
+from dataclasses import dataclass
+from typing import *
+
+class Formula:
+    pass
+
+@dataclass
+class AtomicProposition(Formula):
+    name : str
+
+@dataclass
+class Literal(Formula):
+    name : str
+
+@dataclass
+class LNot(Formula):
+    Formula: Formula
+
+@dataclass
+class LAnd(Formula):
+    left: Formula
+    right: Formula
+
+@dataclass
+class LOr(Formula):
+    left: Formula
+    right: Formula
+
+@dataclass
+class LImplies(Formula):
+    left: Formula
+    right: Formula
+
+@dataclass
+class LEquiv(Formula):
+    left: Formula
+    right: Formula
+
+@dataclass
+class Since(Formula):
+    a : Formula
+    b : Formula
+
+@dataclass
+class Until(Formula):
+    a : Formula
+    b : Formula
+
+@dataclass
+class Next(Formula):
+    Formula: Formula
+
+@dataclass
+class Always(Formula):
+    Formula: Formula
+
+@dataclass
+class Eventually(Formula):
+    Formula: Formula
+
+@dataclass
+class Once(Formula):
+    Formula: Formula
+
+@dataclass
+class Historically(Formula):
+    Formula: Formula
+
+@dataclass
+class Yesterday(Formula):
+    Formula: Formula
+```
+
+These dataclasses are the AST. An LTL formula is built from them by nesting constructors. The semantics is the standard propositional LTL with both past and future operators over an infinite trace:
+
+* `AtomicProposition(name)`         — the atomic proposition `name` is true at the current step.
+* `Literal("True")` / `Literal("False")` — constants.
+* `LNot(f)`                          — `f` is false at the current step.
+* `LAnd(a, b)` / `LOr(a, b)`         — boolean composition.
+* `LImplies(a, b)`                   — `a` implies `b` at the current step.
+* `LEquiv(a, b)`                     — `a` if and only if `b` at the current step.
+* `Next(f)`                          — strict next step: `f` holds at position current+1.
+* `Always(f)`                        — `f` holds at every step from the current step onwards (reflexive).
+* `Eventually(f)`                    — `f` holds at the current step or some future step (reflexive).
+* `Until(a, b)`                      — there is a future step where `b` holds; `a` holds at every step from now up to but not including that step. `b` is GUARANTEED to occur.
+* `Yesterday(f)`                     — at the previous step, `f` holds. False at the initial step (strong Y).
+* `Once(f)`                          — `f` holds at the current step or some past step (reflexive).
+* `Historically(f)`                  — `f` holds at every past step including the current step (reflexive).
+* `Since(a, b)`                      — `b` held at some past step (current or earlier); at every step strictly between that past step and now, `a` has held.
+
+Your task: given a natural-language requirement and a mapping from NL fragments to atomic-proposition variable names, write a single Python expression that builds the AST node representing the formula. Assign it to the variable `formulaToFind`.
+
+CONSTRAINTS — read carefully:
+
+1. You MUST use ONLY the Python class constructors listed above. Do not invent constructor names. Do not use Python operators (`and`, `or`, `not`, `&`, `|`, etc.) — they are NOT valid in the AST representation. Only constructor calls compose.
+2. The `AtomicProposition` constructor takes a SINGLE string argument: the atom name from the mapping. Atom names are lowercase identifiers matching `[a-z][a-z0-9_]*`.
+3. You MUST only use the atom names provided in the Atomic Propositions mapping. Do NOT invent new atoms.
+4. Your output MUST be EXACTLY one line of valid Python of the form `formulaToFind = <expression>`. No surrounding prose, no markdown code fences, no commentary, no greetings, no `print(...)`. Just the assignment.
+5. Common patterns to recognise:
+   * "every X is eventually Y" → `Always(LImplies(AtomicProposition("X"), Eventually(AtomicProposition("Y"))))`
+   * "X only if Y has held"     → `Always(LImplies(AtomicProposition("X"), Once(AtomicProposition("Y"))))`
+   * "X until Y, Y guaranteed"  → `Until(AtomicProposition("X"), AtomicProposition("Y"))`
+   * "X since Y"                → `Since(AtomicProposition("X"), AtomicProposition("Y"))`
+   * "never X"                  → `Always(LNot(AtomicProposition("X")))`
+   * "always X"                 → `Always(AtomicProposition("X"))`
+   * "X at the very next step"  → `Next(AtomicProposition("X"))`
+
+Input:
+Natural Language: "{NATURAL_LANGUAGE}"
+Atomic Propositions: {ATOMIC_PROPOSITIONS}
+
+Return ONLY the single line:
+formulaToFind = <your Python expression>

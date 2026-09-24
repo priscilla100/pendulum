@@ -1,0 +1,14 @@
+/Users/priscilladanso/Documents/GitHub/pendulum/target/release/deps/serde-e924e65b847a9f7c.d: /Users/priscilladanso/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/lib.rs /Users/priscilladanso/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/integer128.rs /Users/priscilladanso/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/private/mod.rs /Users/priscilladanso/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/private/de.rs /Users/priscilladanso/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/private/ser.rs /Users/priscilladanso/Documents/GitHub/pendulum/target/release/build/serde-8a09770435cf3db6/out/private.rs
+
+/Users/priscilladanso/Documents/GitHub/pendulum/target/release/deps/libserde-e924e65b847a9f7c.rlib: /Users/priscilladanso/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/lib.rs /Users/priscilladanso/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/integer128.rs /Users/priscilladanso/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/private/mod.rs /Users/priscilladanso/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/private/de.rs /Users/priscilladanso/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/private/ser.rs /Users/priscilladanso/Documents/GitHub/pendulum/target/release/build/serde-8a09770435cf3db6/out/private.rs
+
+/Users/priscilladanso/Documents/GitHub/pendulum/target/release/deps/libserde-e924e65b847a9f7c.rmeta: /Users/priscilladanso/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/lib.rs /Users/priscilladanso/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/integer128.rs /Users/priscilladanso/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/private/mod.rs /Users/priscilladanso/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/private/de.rs /Users/priscilladanso/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/private/ser.rs /Users/priscilladanso/Documents/GitHub/pendulum/target/release/build/serde-8a09770435cf3db6/out/private.rs
+
+/Users/priscilladanso/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/lib.rs:
+/Users/priscilladanso/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/integer128.rs:
+/Users/priscilladanso/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/private/mod.rs:
+/Users/priscilladanso/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/private/de.rs:
+/Users/priscilladanso/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/private/ser.rs:
+/Users/priscilladanso/Documents/GitHub/pendulum/target/release/build/serde-8a09770435cf3db6/out/private.rs:
+
+# env-dep:OUT_DIR=/Users/priscilladanso/Documents/GitHub/pendulum/target/release/build/serde-8a09770435cf3db6/out

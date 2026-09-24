@@ -1,0 +1,14 @@
+WHAT: Compile a SALT specification into a propositional LTL formula. SALT is a restricted natural-language-ish surface syntax for LTL (`always`, `eventually`, `until`, `before`, `after`, `once`, `since`, etc.) that compiles deterministically.
+
+WHEN: Try this BEFORE drafting an LTL formula by hand when the NL maps cleanly to common temporal patterns (Dwyer patterns, scope operators, counting, sequences). If you don't already know SALT, call `salt_help` first to fetch the syntax reference; without it the spec will be rejected.
+
+INPUTS:
+  - `spec` (string, required): one or more `assert <expression>` lines (multi-line, with optional `declare` and `define` macros).
+  - `forbid_past` (bool, default false): pass `-nopast` to SALT.
+  - `forbid_next` (bool, default false): pass `-nonext` to SALT (also forbids regular expressions).
+
+OUTPUTS: `{ ok, ltl?, error?, raw? }`.
+  - `ok=true`: `ltl=<formula>` already rewritten to our parser's syntax (SMV `V`→`R`, `LTLSPEC` stripped); feed to `parse_and_canonicalize`.
+  - `ok=false`: `error=<SALT diagnostic verbatim>`. Read it, fix the spec (or call `salt_help` if the error references a pattern you're unsure of), retry.
+
+NOTE: The full SALT grammar lives in the `salt_help` tool — don't paste it inline.

@@ -1,0 +1,19 @@
+; Library bundling the AST, lexer, and parser modules.
+(library
+ (name pltl)
+ (libraries menhirLib yojson)
+ (modules ast parser lexer))
+
+; CLI executable.
+(executable
+ (name main)
+ (modules main)
+ (libraries pltl))
+
+(ocamllex lexer)
+
+; --inspection / --table keep parser tables small and let us query the
+; grammar at runtime if we ever want richer error messages.
+(menhir
+ (modules parser)
+ (flags --inspection --table))
